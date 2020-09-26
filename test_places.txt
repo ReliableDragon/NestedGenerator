@@ -1,10 +1,13 @@
 test_places
 
 1 $, iowa
-  5 $, Cedar Rapids
+  500 $, Cedar Rapids$
     5 New Bo
     3 Collins Road
     1 Cedar Valley Nature Trail
+    $
+    1 , the city of five seasons
+    1 , the city of five smells
   3 Iowa City
   1 Des Moines
 

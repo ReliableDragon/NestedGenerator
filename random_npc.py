@@ -61,7 +61,7 @@ def create_character():
 
   event_choices = NestedChoices.load_from_file('npc_events.txt')
   event_choices.register_subtable(nested_jobs)
-  events = event_choices.gen_choice(params={'num':rand.randint(0, 3), 'uniqueness_level':1})
+  events = event_choices.gen_choice(params={'num':rand.randint(1, 3), 'uniqueness_level':1})
   if not isinstance(events, list):
       events = [events]
 

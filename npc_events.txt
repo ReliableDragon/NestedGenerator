@@ -7,7 +7,9 @@ npc_events
       25 they let their morals bend, and took mob money
       10 a rich relative died, and left them enough money to get off the ground
       20 the quality of their work started to attract attention
-    50 Slowly but surely over the years, they've worked their way to where they are today.
+    50 Slowly but surely over the years, $
+      50 they've worked their way to where they are today
+      50 things have gotten worse
   10 rich, but lost everything when $
     100 the Neo-Orcs last attacked
     100 a corrupt official took their property
@@ -20,11 +22,12 @@ npc_events
       5 a neo-orc assassination squad, from which they barely escaped with their life
 
 50 They used to be in the guards, but $
-  100 was kicked out for $
+  100 were kicked out for $
     100 stealing
     25 insubordination
     50 getting into a fight with $
       100 another guard
+      50 their captain
       50 a civilian
       5 a child, after the kid accidentally hit them with a ball
     50 drinking
@@ -52,9 +55,15 @@ npc_events
     50 they have an injury that makes it difficult
     50 they were forced into it against their will
 
-30 Their $ is injured
+30 Their $ was injured $
   50 arm
-  30 hard
+  30 head
   50 leg
   20 head
   25 foot
+  $
+  100 when they $
+    100 fell off a horse
+    100 had a workplace accident
+  25 in a duel
+  100 several years ago
