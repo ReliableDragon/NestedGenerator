@@ -1,0 +1,60 @@
+npc_events
+
+100 They grew up $
+  100 poor, and had to struggle for everything they've gained. $
+    100 They finally caught their big break when $
+      25 they managed to acquire the patronage of a minor noble
+      25 they let their morals bend, and took mob money
+      10 a rich relative died, and left them enough money to get off the ground
+      20 the quality of their work started to attract attention
+    50 Slowly but surely over the years, they've worked their way to where they are today.
+  10 rich, but lost everything when $
+    100 the Neo-Orcs last attacked
+    100 a corrupt official took their property
+    100 they offended a mob boss, who used their influence to oust them
+    50 their home was raided by $
+      100 goblins
+      100 kobolds
+      75 the mob
+      25 guards
+      5 a neo-orc assassination squad, from which they barely escaped with their life
+
+50 They used to be in the guards, but $
+  100 was kicked out for $
+    100 stealing
+    25 insubordination
+    50 getting into a fight with $
+      100 another guard
+      50 a civilian
+      5 a child, after the kid accidentally hit them with a ball
+    50 drinking
+    100 refusing to "play ball" with the mob
+  50 had to leave because $
+    100 they were wounded $
+      100 while chasing down a criminal
+      50 while off-duty
+      50 during training
+    100 their family was worried about them
+  10 they retired$
+    20
+    5  with honor, after defeating [2-5] highwaymen and saving a $
+      5 merchant
+      5 family of farmers
+      3 noble
+
+20 They $
+  50 love their job, because $
+    50 it's what they've wanted to do ever since they were a little kid
+    50 it's what their family has done, going back [3-10] generations
+  50 hate their job, because $
+    50 it doesn't pay enough
+    20 they are allergic
+    50 they have an injury that makes it difficult
+    50 they were forced into it against their will
+
+30 Their $ is injured
+  50 arm
+  30 hard
+  50 leg
+  20 head
+  25 foot

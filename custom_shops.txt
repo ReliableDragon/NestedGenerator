@@ -1,0 +1,79 @@
+custom_shops
+
+1 ? - At the end of a dark alleyway. Shop just has a question mark for its sign. Upon opening the door, the players find an empty 10x10 room, with a red X in the middle of the floor. Anyone who stands on the red X begins to shrink, but regains their normal size upon leaving the shop. If they shrink down to less than 3 inches tall, or make a DC 15 check, they see a tiny disguised door in the wall across from the main door. It opens onto a tiny shop, run by a mouse (african pygmy mouse). It sells
+
+1 Hattie’s Haberdashing Hats - Run by an old lady with a son who works as a clerk in the palace. She sells all kinds of hats. Has a hat with a slot for a candle in it, that can provide light, for 100gp. Has a massive, feathery hat that makes the wearer blind, for 200gp.
+
+1 Das Boots - Run by a man with a thick German accent, and a spiky kaiser helmet. Sells all sorts of boots, all of which are waterproof, a fact he’s very proud of. Has a pair of Boots of Springing and Striding that he’ll show off to people who make a good impression on him.
+
+1 The Stabporium - Run by a mysterious person in full armor, who never speaks. Sells spears. Just normal spears. They line the walls, are inside glass displays, mounted on racks, even hang from the ceiling. All prices are listed as “see attendant”. When asked about a price, the shopkeeper will point to a price from 1gp to 100gp on a chart on the counter, seemingly at random. However, he will always choose the same price for the same spear.
+
+1 Obvious Plants - Plant shop. Run by a man who’s transparently a police informant.
+
+1 Death Awaits - Sign is a skull and crossbones. Sign on the door says, “Warning: Death Awaits”. A DC 10 perception reveals a corpse in the trash pile next to the shop. Doorknob holds a DC 10 perception poison needle trap, with a DC 12 con save. Opening the door triggers a DC 15 per crossbow trap, with a DC 10 dex save. The room is long and narrow, with a strange green glow coming from the far wall. On the floor inside the door is an explosive runes (3d6) glyph of warding (DC 10 per). It’s on top of a pressure plate (DC 12 per) linked to a dart trap in the right wall (DC 10 ref). If characters dodge forward, rather than back, they find the next section of floor is an illusion (DC 12 per) over a 25ft pit (3.5d6 fall damage). Successfully noticing the pit and jumping over it (DC 5, disadvantage if done while dodging the dart trap) lands them in front of the far wall. The green glow turns out to be a light spell attached to explosive runes (3d6 if read) saying “Death Awaits”. Then the wall begins to push them back towards the pit trap again. Jumping over it will re-trigger the pressure plate, even if they know it’s there, though they can then dodge it. Landing in the pit after the runes have been triggered allows a DC 15 perception check to find a hidden slit in the rock, through which they can talk to a man and buy various poisons.
+
+1 Duck Shop - Sells ducks and duck things.
+
+1 Chill Down - Door leading to a staircase going down, getting colder. At the bottom is an ice cave, with a man selling things made of ice.
+
+1 Heat Up - Door next to chill down. Goes up a staircase, getting hotter. At the top, a woman sells items that light on fire.
+
+1 The Slimeporium - Slimes! All over! You can ride the big ones!
+
+1 Bear Traps R Us - Literally just a big room full of bear traps.
+
+1 (X) AAAAAAAAAA - Open the door, and there’s a mouth behind it that just screams.
+
+1 The Upside Down - Normal General Store, except when you go inside you immediately fall 10 feet onto the ceiling, which is actually the floor. The owner has no idea why the shop is this way, but is happy his rent is low.
+
+1 WizzyWeldy - A wizard who does welding with lightning spells.
+
+1 Alleyway completely covered in toast. At the end is a fire, where a crazy person is toasting bread to constantly replace any that’s gone bad.
+
+1 Public park, but it’s a very steep pit. Some sort of haze hangs over it, so you can’t see across it. Lots of people sitting near the outside, but as you go further, it gets darker and darker, until eventually there’s no sunlight at all, unless it’s exactly noon. The further down you go, the larger the rats get, and the more gnarled and withered the trees become. The grass turns bone white. In the distance, you see faint outlines of flame, with red eyes, but if you approach them they disappear. The grass grows taller. A rat the size of a horse passes next to you. The trees have become simply gnarled clumps of wood, twisting tortuously along the ground for dozens of feet, as if they are trying to escape from something. The pit continues still further down. A hissing, chittering noise can be heard from below. The grass is flattened, outward, as if by a great wind, but none is felt. The air begins to stink, and an acrid smell burns your nostrils. Finally, you reach the bottom. In the center of the pit, stands one lone blood red pole, reaching up further than you can see. It ripples and pulses upwards, as if it were sucking the life from the earth itself, and sending it up, up, up, to whatever unseen thing might lay at its end. If you return to the top, the pole is no longer visible. Whatever that pole was feeding, it lies somewhere within the park.
+
+1 XYZ Cafe - Normal cafe at the front, but in the back a DC 10 check shows there’s a room filled with people, and a DC 15 check will allow you to hear that they’re animatedly talking politics and revolution.
+
+1 Circus Mediocritus - Moderately sized racetrack, used regularly for horse races, dog races, human races, chariot races, rabbit and turtle races, three-legged races, and all other sorts of speed-based funtimes.
+
+1 Lamppost mysteriously painted bright red. Anything that touches it also turns red.
+
+1 Spooky Scary Cemetery - High wrought iron fence, tombstones, hill with a single large crypt. The tombstones all have dates from the future. The groundskeeper is sometimes visible in the distance digging graves, but only ever in the distance, and always before some sort of disaster. There’s wailing from the crypt on the full moon, and green light pours from it. A faint scratching can be heard from the graves during a full moon as well. Legend says that anyone who sees an empty plot in this cemetery will be buried in it before they leave.
+
+1 It’s a Jungle in Here - Hot, muggy shop, that sells wooden items. Vines grow everywhere, and there seems to be a tree canopy overhead.
+
+1 The Safe Shop - Store where all the walls are padded, and they only sell items you couldn’t possibly hurt anyone with. You have to take off all your weapons and armor before entering.
+
+1 Guard Post Omega - Where the most crack of the guard resides. The outside has a moat and a drawbridge, with wooden spikes along the base. Inside, there’s a small room on the ground floor, a spiral staircase to the top, and another small room on top. Outside the upper room is a parapet used for surveying the city. No less than 15 guards here at any given time.
+
+1 Arrrrrrtful Gear - Pirate shop. Enter via gangplank, onto what looks like the deck of a boat. Various stands are set up around the deck, selling peg legs, eye patches, parrots, and the like.
+
+1 Shop of Unimaginable Horrors - Entering this shop causes a DC 30 con save to avoid vomiting and fleeing immediately. Even reading the sign requires a DC 15 con save, or you’re too nauseated.
+
+1 The Totally Ordinary General Store - Entering this cramped shop, you see the shopkeeper just to the left of the door, and signs saying “Sale! This way!” pointing forward and to the right down some narrow hallways. The further you go into the store, there always seem to be more aisles and passageways, always with signs saying “Great prices, just up ahead!”, but the passageways never actually seem to get to many goods. The few items you do pass, such as one labelled “Spyglass, 25gp”, are all at great prices, but all have “Sorry, sold out!” plaques where the item would be.
+
+1 ? - An unmarked shop, which only appears at night. A sign with nothing but a red arrow is set out, pointing down a flight of stairs lit dimly by candles. At the bottom, an old woman sits in a room that contains nothing but a door. She greets them, “Greetings, adventurers. Mine is not a common shop - you do not pay in money. Should you wish to proceed, enter through the door.” If they go through, they find themselves each in a different room. On a pedestal in the center rests an item, with a plaque on the wall saying, “Take this for free, if so wisheth thee, or enter the door, for greater things in store. But beware if you proceed, of the dangers of greed.” If they go past the last item, they are trapped in a blank stone room in an unknown plane for an hour. If they can’t rescue themselves after that time, the woman will come and retrieve them, but will require them to give her a favor that she can call in at any time. The items are:
+1. A loaf of bread.
+2. A gallon of ale.
+3. A bottle of fine wine.
+4. A bottle of holy water.
+5. A Potion of Healing.
+6. Trapped.
+
+1 University of Mellina Septra (UMS) - 1000 year old university, with departments of Mathematics, Physics, Philosophy, Magic, Alchemy, and Astronomy.
+
+1 The Scary Door - A door, sitting on top of a small stone hill in the center of a plaza. Viewing it makes you uncomfortable, and approaching it requires a WIS 15 save to avoid being frightened and unable to approach. The door is locked (DC 18 sleight of hand), and has a sign on it saying, “DO NOT OPEN”. Opening the door links it to a random door, anywhere in the world, different every time it’s opened. Going through it is one-way. There are a few memorials placed at the base of the hill, to people who were lost going through the door.
+
+1 Egg Tower Farm - Just outside town. Farmer with hundreds of chickens living in a tall, spiraling tower. Each morning, the eggs come down a spiral chute inside the tower, and land at the bottom.
+
+1 Friendly Steve’s Groceries - A grocer (character 36) runs a very friendly grocery store, while also operating a cult out of his basement. They’re trying to revive a long-dead god of pestilence, in the hopes that he will give them power over disease. The staircase down is inside the living quarters, hidden in a chest next to the fireplace.
+
+1 The Hallway of Infinite Candles - A door in a dark alleyway opens into a hallway, lit by candles every foot. They seem to stretch on forever, and they do. If a candle is removed, the hallway will extend infinitely in both directions until it is replaced.
+
+1 Cattie-whackus - Weapons shop run by a middle-aged lady. The shop is home to over 2 dozen cats, as the owner rescues them regularly. Dangerous for Morse! The cats occasionally knock over weapons, requiring a DC 10 reflex save to avoid being hit. All weapons sold here grant Cat’s Grace as long as they’re being actively wielded.
+
+1 The Royal Copyists - Large, 10 story building, with dozens of scribes on each floor copying out books. The higher up you go, the more important the books are, starting with simple decrees, and eventually reaching secret government documents. The very top floor has wizards copying magical texts and clerics copying sacred ones. Unusual for a huge number of windows on every floor, to let light in.
+
+1 Acro - A shop specializing in light armor and weapons for acrobatically inclined adventurers. All of the goods, however, are high off the ground, requiring the use of ladders, ropes, balance beams, and other acrobatic tests to even purchase anything.
+
+1 Orcish Embassy - In the noble’s district. Across the street is a mansion that’s very obviously an observation post.

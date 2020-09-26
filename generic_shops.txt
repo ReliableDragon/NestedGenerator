@@ -1,0 +1,99 @@
+generic_shops
+
+10 alchemist
+
+25 apothecary
+
+50 bakery
+
+75 bar
+
+25 basketmaker
+
+30 blacksmith
+
+10 bookseller
+
+25 bureaucratic building
+
+20 butcher
+
+100 cafe
+
+30 candlemaker
+
+40 carpenter
+
+10 clockmaker
+
+55 clothier
+
+30 construction site
+
+40 flower shop
+
+50 garden
+
+20 general store
+
+10 glassblower
+
+5 goldsmith
+
+5 graveyard
+
+75 grocer
+
+50 guard post
+
+25 guild hall
+
+15 haberdasher
+
+10 hardware store
+
+10 healer
+
+20 inn
+
+5 jail
+
+15 leatherworker
+
+5 magic shop
+
+10 mansion
+
+25 mason
+
+15 painter’s studio
+
+50 park
+
+50 pawn shop
+
+35 potter
+
+25 restaurant
+
+55 seamstress
+
+30 scribe
+
+20 sculptor
+
+30 shoemaker
+
+30 silversmith
+
+5 stocks
+
+10 temple
+
+30 warehouse
+
+40 washerwoman’s
+
+30 watchmaker
+
+40 weaver

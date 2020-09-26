@@ -1,0 +1,48 @@
+country_places
+
+50 farm
+
+10 ranch
+
+20 mill
+
+15 tanner
+
+5 slaughterhouse
+
+10 smokehouse
+
+15 lumberyard
+
+5 quarry
+
+5 mine
+
+10 monastery
+
+15 stable
+
+40 herd of $
+  50 sheep
+  40 cows
+  40 pigs
+  50 chickens
+  20 llamas
+  10 ducks (not sentient)
+
+100 field of $
+  100 wheat
+  75 corn
+  50 beans
+  20 flax
+  30 potatoes
+  40 tomatoes
+  75 cabbage
+  50 squash
+  30 broccoli
+  50 $ trees:
+    1 apple
+    1 pear
+    1 cherry
+
+5 a honey farm

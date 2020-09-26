@@ -1,0 +1,15 @@
+test_places
+
+1 $, iowa
+  5 $, Cedar Rapids
+    5 New Bo
+    3 Collins Road
+    1 Cedar Valley Nature Trail
+  3 Iowa City
+  1 Des Moines
+
+1000 $, washington
+  1 $, Seattle [1-5]
+    1 $, Capitol Hill [10-3N]
+      1
+    1 @countries_table
