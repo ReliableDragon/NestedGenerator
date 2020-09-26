@@ -45,7 +45,7 @@ npc_events
       5 family of farmers
       3 noble
 
-20 They $
+10 They $
   50 love their job, because $
     50 it's what they've wanted to do ever since they were a little kid
     50 it's what their family has done, going back [3-10] generations
@@ -66,15 +66,16 @@ npc_events
   100 when they $
     100 fell off a horse
     100 had a workplace accident
-    100 were attacked by a(n)
+    100 were attacked by a(n) $
       100 wolf
       100 goblin
       50 hawk
       10 orc
   25 in a duel
+  25 while they were in the army
   100 several years ago
 
-10 They are secretly a member of $
+20 They are secretly a member of $
   10 a group of Neo-Orc supporters
   20 a group of revolutionaries
   20 a cult devoted to $
@@ -88,10 +89,60 @@ npc_events
       10 madness
       20 war
 
-  30 They are an informant for $
-    20 the Straka
-    20 the Dolora
-    20 the Corela
-    20 the town guard
+30 They are an informant for $
+  20 the Straka
+  20 the Dolora
+  20 the Corela
+  20 the town guard
 
-  100 When they were a child, they $
+100 When they were a child, they $
+  100 were abandoned $
+    100 in the woods and $
+      100 raised by a $ who found them
+        100 farmer
+        100 woodcutter
+        100 hunter
+        10 pack of wolves
+      25 had to learn to fend for themselves
+    100 by their parents, and $
+      100 grew up as an orphan on the streets
+      100 were taken in by $
+        100 a group of monks
+        10 a minor nobleman
+        100 a kindly $
+          100 @random_jobs
+
+100 They have a weakness for $
+  100 alcohol, and their drink of choice is $
+    100 beer
+    75 wine
+    50 whiskey
+    20 vodka
+    5 kombucha
+    1 fermented milk
+  75 betting on $
+    100 horse races
+    50 dog races
+    100 dice games
+
+75 They are trying to save up enough money to $
+  100 buy $
+    100 their house
+    50 a farm
+    50 a larger house
+  10 rescue a $ from debtor's prison
+    10 friend
+    10 family member
+  50 follow their dream and become a @random_jobs
+  25 run away to $
+    10 the dwarven lands
+    10 the halfling lands
+    5 the Deepening Woods
+    2 the Neo-Orc kingdom
+    1 the Endless Desert
+
+5 They were cursed as a child, to $
+  20 have everyone they love leave them
+  20 never find love
+  20 have all their business ventures fail
+  10 turn into a toad every night

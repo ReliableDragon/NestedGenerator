@@ -15,9 +15,9 @@ test_places
   1 $, Seattle [1-5]
     1 $, Capitol Hill [10-3N]
       1
-    1 @countries_table
+    1 {Country 1: @countries_table[2,-1]}{ Country 2: @2countries_table}{ Country 3: @3countries_table}
 
-10000 San Francisco, $$
+1000 San Francisco, $$
   1 California, $
     1 USA
   $

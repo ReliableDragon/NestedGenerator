@@ -1,0 +1,10 @@
+shop_interiors
+
+10 is filled with $
+  10 cats
+  10 plants
+
+10 has $
+  10 wide, broad aisles
+  10 narrow, cramped aisles
+  5 twisting, turning paths through the merchandise

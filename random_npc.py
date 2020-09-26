@@ -4,7 +4,7 @@ import random as rand
 import math
 from nested_data import NestedChoices
 
-def create_character():
+def create_character(job_override=None):
   name_syllables = ['al', 'ben', 'cor', 'dan', 'fan', 'fer', 'frey', 'gra', 'gar', 'ger', 'hin', 'har',
                     'par', 'pen', 'pul', 'ser', 'star', 'ston', 'nikov', 'wray', 'chill', 'chan', 'lon',
                     'and', 'drak', 'crat', 'yon']
@@ -42,8 +42,7 @@ def create_character():
           'priest', 'guard', 'guard', 'soldier', 'clerk', 'nobleman', 'barkeep', 'clockmaker', 'silversmith',
           'potter', 'cafe proprietor', 'groundskeeper', 'Dolora thug', 'Corela thug', 'Straka thug']
   nested_jobs = NestedChoices.load_from_string_list('random_jobs', jobs)
-  job = nested_jobs.gen_choice()
-  # job = jobs[rand.randint(0, len(jobs) - 1)]
+  job = nested_jobs.gen_choices()[0]
 
   wealths = ['dirt poor', 'dirt poor', 'poor', 'poor', 'getting by', 'getting by', 'getting by', 'well-off',
             'well-off', 'rich']
@@ -61,13 +60,15 @@ def create_character():
 
   event_choices = NestedChoices.load_from_file('npc_events.txt')
   event_choices.register_subtable(nested_jobs)
-  events = event_choices.gen_choice(params={'num':rand.randint(1, 3), 'uniqueness_level':1})
-  if not isinstance(events, list):
-      events = [events]
+  events = event_choices.gen_choices(params={'num':rand.randint(1, 3), 'uniqueness_level':1})
 
   char = f'{name}, a {age} year(s) old {gender} {race}.\n'
   char += f'They are {relationship}, and ' + ('don\'t have' if children == 0 else f'have {children}') + ' children.\n'
-  char += f'They are a {job}, and are {wealth}.\n'
+  if job_override:
+      char += f'They run a {job_override}'
+  else:
+      char += f'They are a {job}'
+  char += f', and are {wealth}.\n'
   char += f'Their greatest desire in life is {desire}.\n'
   char += f'They are a level {level} {npc_class}.\n'
 

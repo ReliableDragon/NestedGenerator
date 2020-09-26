@@ -1,0 +1,18 @@
+random_shops
+generic_shops:generic_shops.txt
+shop_interiors:shop_interiors.txt
+
+100 A(n) $ $ $. The interior $
+  10 old
+  20
+  10 new
+  5 crumbling
+  5 partially-built
+  $
+  20 wooden
+  20 brick
+  10 stone
+  $
+  1 @generic_shops
+  $
+  1 @shop_interiors[2-3, 1], {@3shop_interiors, }and @2shop_interiors

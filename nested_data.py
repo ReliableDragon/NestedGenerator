@@ -3,6 +3,7 @@ import random
 import uuid
 import math
 import logging
+import argparse
 
 class WeightedChoice():
     def __init__(self, weight, choice, tag=1):
@@ -39,13 +40,32 @@ class NestedChoices():
     def load_from_file(filename):
         with open(filename, 'r', encoding='utf-8') as choices_file:
             choices_string = choices_file.read()
-            namespace_id = choices_string.split('\n', 1)[0]
-            #Strip the id off.
-            choices_string = choices_string.split('\n', 2)[2]
-            validate_choices(namespace_id, choices_string)
-            choices_tree = NestedChoices.choices_string_to_tree(choices_string)
+        namespace_id = choices_string.split('\n', 1)[0]
+        #Strip the id off.
+        choices_string = choices_string.split('\n', 1)[1]
 
-        return NestedChoices(namespace_id, choices_tree)
+        import_files = []
+        while ':' in choices_string[:choices_string.index('\n')]:
+            logging.debug(f'Importing from choices_string (trunc): {choices_string[:50]}')
+            required_module = choices_string.split('\n', 1)[0]
+            module_filename = required_module.split(':')[1]
+            #Strip the import off.
+            choices_string = choices_string.split('\n', 1)[1]
+            import_files.append(module_filename)
+
+        # Strip off the leading newline.
+        choices_string = choices_string.split('\n', 1)[1]
+
+        validate_choices(namespace_id, choices_string)
+        choices_tree = NestedChoices.choices_string_to_tree(choices_string)
+
+        resulting_nested_choices = NestedChoices(namespace_id, choices_tree)
+
+        for filename in import_files:
+            imported_choice = NestedChoices.load_from_file(filename)
+            resulting_nested_choices.register_subtable(imported_choice)
+
+        return resulting_nested_choices
 
     @staticmethod
     def choices_string_to_tree(choices_string):
@@ -148,7 +168,7 @@ class NestedChoices():
     # '$ a $' would be allowed to generate '1 a 2' and '1 a 3' under 'all', but
     # under 'each' that would not be allowed, since the first value repeated itself.
     # Not yet implemented.
-    def gen_choice(self, params={'num': 1, 'uniqueness_level': -1, 'uniqueness_mode':'each'}):
+    def gen_choices(self, params={'num': 1, 'uniqueness_level': 0, 'uniqueness_mode':'each'}):
         generated_choices = []
         used_choices = []
 
@@ -164,10 +184,10 @@ class NestedChoices():
             logging.info(f'generated_choice: {generated_choice}')
             generated_choices.append(generated_choice)
 
-        if params['num'] == 1:
-            return generated_choice
-        else:
-            return generated_choices
+        # if params['num'] == 1:
+        #     return generated_choice
+        # else:
+        return generated_choices
 
     def make_replacements(self, generated_choice):
         generated_choice = replace_ranges(generated_choice)
@@ -176,18 +196,23 @@ class NestedChoices():
         return generated_choice
 
     def make_subtable_calls(self, generated_choice):
-        subtable_replace = re.compile('@([\w_]+)(\[(\d+),(-?\d+)\])?')
+        subtable_replace = re.compile('@([a-zA-Z_]+)(\[(\d+)(-\d+)?, ?(-?\d+)\])?')
         match = subtable_replace.search(generated_choice)
         while match:
             full_match = match.group(0)
             subtable_id = match.group(1)
-            num_to_gen = match.group(3)
-            uniqueness_level = match.group(4)
+            base_num_to_gen = match.group(3)
+            end_num_to_gen = match.group(4)
+            uniqueness_level = match.group(5)
 
-            if num_to_gen == None:
+            # If both of these are filled out, we have a variable-length subtable call
+            if base_num_to_gen != None and end_num_to_gen != None:
+                num_to_gen = random.randint(int(base_num_to_gen), int(end_num_to_gen[1:]))
+
+            if base_num_to_gen == None:
                 num_to_gen = 1
             else:
-                num_to_gen = int(num_to_gen)
+                num_to_gen = int(base_num_to_gen)
 
             if uniqueness_level == None:
                 uniqueness_level = 0
@@ -196,10 +221,74 @@ class NestedChoices():
             logging.info(f'making call to subtable {subtable_id} with num_to_gen={num_to_gen} and uniqueness_level={uniqueness_level}.')
 
             subtable = self.subtables[subtable_id]
+            subtable_choices = subtable.gen_choices(params={'num':num_to_gen, 'uniqueness_level':uniqueness_level})
 
-            generated_choice = generated_choice.replace(full_match, subtable.gen_choice(params={'num':num_to_gen, 'uniqueness_level':uniqueness_level}))
+            generated_choice = process_brace_clause(generated_choice, '@' + subtable_id, delete=False)
+            generated_choice = generated_choice.replace(full_match, subtable_choices[0], 1)
+
+            # subtable = self.subtables[subtable_id]
+            # subtable_choices = subtable.gen_choices(params={'num':num_to_gen, 'uniqueness_level':uniqueness_level})
+            # logging.debug(f'subtable generated values: {subtable_choices}')
+            #
+            # generated_choice = generated_choice.replace(full_match, subtable_choices[0], 1)
+            # # Matches using results beyond the first are of the form '@\dsubtable_id'.
+            # i = 2
+            # for choice in subtable_choices[1:]:
+            #     # Add two, because we start counting at 1, and have already used
+            #     # one value above.
+            #     numbered_id = '@' + str(i) + subtable_id
+            #     logging.debug(f'subtable numbered_id: {numbered_id}')
+            #     generated_choice = process_brace_clause(generated_choice, numbered_id, delete=False)
+            #     generated_choice = generated_choice.replace(numbered_id, choice, 1)
+            # numbered_id = '@' + str(i) + subtable_id
+            # while numbered_id in generated_choice:
+            #     logging.debug(f'Removing subtable clause, numbered_id: {numbered_id}')
+            #     generated_choice = process_brace_clause(generated_choice, numbered_id, delete=True)
+            #     i += 1
+            #     numbered_id = '@' + str(i+2) + subtable_id
+            generated_choice = self.replace_repeated_subtable_clauses(generated_choice, subtable_choices, subtable_id)
+
             match = subtable_replace.search(generated_choice)
         return generated_choice
+
+    def replace_repeated_subtable_clauses(self, generated_choice, subtable_choices, subtable_id):
+        logging.debug(f'subtable generated values: {subtable_choices}')
+        # Matches using results beyond the first are of the form '@\dsubtable_id'.
+        i = 2
+        for choice in subtable_choices[1:]:
+            # Add two, because we start counting at 1, and have already used
+            # one value above.
+            numbered_id = '@' + str(i) + subtable_id
+            logging.debug(f'subtable numbered_id: {numbered_id}')
+            generated_choice = process_brace_clause(generated_choice, numbered_id, delete=False)
+            generated_choice = generated_choice.replace(numbered_id, choice, 1)
+            i += 1
+
+        numbered_id = '@' + str(i) + subtable_id
+        while numbered_id in generated_choice:
+            logging.debug(f'Removing subtable clause, numbered_id: {numbered_id}')
+            generated_choice = process_brace_clause(generated_choice, numbered_id, delete=True)
+            i += 1
+            numbered_id = '@' + str(i+2) + subtable_id
+        return generated_choice
+
+def process_brace_clause(generated_choice, numbered_id, delete=False):
+    choice_loc = generated_choice.index(numbered_id)
+    try:
+        first_brace = generated_choice.rindex('{', 0, choice_loc)
+        last_brace = generated_choice.index('}', choice_loc)
+    except ValueError:
+        logging.info(f'no braces found for numbered_id "{numbered_id}" in choice "{generated_choice}".')
+        return generated_choice
+    if delete:
+        # Delete everything inside the braces.
+        result = generated_choice[:first_brace] + generated_choice[last_brace+1:]
+    else:
+        # Remove the braces.
+        result = generated_choice[:first_brace] + generated_choice[first_brace+1:last_brace] + generated_choice[last_brace+1:]
+
+    logging.debug(f'choice after processing braces: {result}')
+    return result
 
 def generation_step(generated_choice, dict_and_choice_backtrace, used_choices, level, choices_dict, params):
     if '$' not in generated_choice:
@@ -296,55 +385,6 @@ def recursive_dict_print(dict, indent=0):
         val += indent_str + '}\n'
     return val
 
-def gen_choice_bak(self, params={'num': 1, 'uniqueness_level': -1}):
-    generated_choices = []
-    used_choices = []
-
-    for i in range(params['num']):
-        generated = False
-        generated_choice = '$'
-        dict_and_choice_backtrace = []
-        level = 0
-        choices_dict = self.choices
-
-        # generated_choice = generation_step(generated_choice, dict_and_choice_backtrace, )
-        while not generated:
-            level += 1
-            filtered_choices = list(filter(lambda c: c not in used_choices, choices_dict))
-
-            weighted_choice = pick_choice(filtered_choices)
-
-            if level == params['uniqueness_level']:
-                used_choices.append(weighted_choice)
-                remove_childless_parents(dict_and_choice_backtrace, used_choices)
-
-            generated_choice = self.make_replacements(generated_choice, weighted_choice)
-            # If there's nothing in the corresponding list, we're at a leaf node
-            # and are done generating this choice.
-            if not choices_dict[weighted_choice]:
-                if params['uniqueness_level'] == -1:
-                    used_choices.append(weighted_choice)
-                    remove_childless_parents(dict_and_choice_backtrace, used_choices)
-                generated = True
-            else:
-                dict_and_choice_backtrace.append((choices_dict, weighted_choice))
-                choices_dict = choices_dict[weighted_choice]
-
-        generated_choices.append(generated_choice)
-
-    if params['num'] == 1:
-        return generated_choice
-    else:
-        return generated_choices
-
-def load_from_file_bak(filename):
-    with open(filename, 'r', encoding='utf-8') as choices_file:
-        choices_string = choices_file.read().split('\n\n')
-        choices_string = [choice.strip() for choice in choices_string]
-        # weights_and_choices = [choice.split(' ', 1) for choice in choices_string]
-        # weighted_choices = list(map(lambda wandp: (int(wandp[0]), wandp[1]), weights_and_choices))
-    return weighted_choices
-
 def validate_choices(namespace_id, choices_string):
     assert len(choices_string) != 0, 'Got empty choices data!'
     lines = choices_string.split('\n')
@@ -378,8 +418,15 @@ def split_into_lines(s):
     return re.split('\r?\n', s)
 
 if __name__ == "__main__":
-    # logging.basicConfig(level=logging.DEBUG)
+    logging_level = logging.WARNING
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--debug', action='store_true')
+    args = parser.parse_args()
+    if args.debug:
+        logging_level = logging.DEBUG
+    logging.basicConfig(level=logging_level)
+
     choices = NestedChoices.load_from_file('test_places.txt')
     subtable = NestedChoices.load_from_string_list('countries_table', ['Germany', 'France', 'UK'], [5, 3, 1])
     choices.register_subtable(subtable)
-    print(choices.gen_choice(params={'num': 4, 'uniqueness_level': -1}))
+    print(choices.gen_choices(params={'num': 4, 'uniqueness_level': -1}))
