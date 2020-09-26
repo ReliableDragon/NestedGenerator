@@ -1,0 +1,299 @@
+A diary (3sp)
+
+A dagger (25% chance of bloodstain) (25sp)
+
+A snowglobe (2gp)
+
+A set of dinner plates (5sp-15gp)
+
+Ceramic
+
+Wooden
+
+Pewter
+
+Silver
+
+Gold
+
+A set of silverware (50cp-3gp)
+
+An instrument (5sp-50gp)
+
+Guitar
+
+Lute
+
+Flute
+
+Accordion
+
+Piano
+
+Violin
+
+Drum
+
+Pipes
+
+Bunch of candles (15cp)
+
+Wig (25sp)
+
+Painting (2gp)
+
+Sunset
+
+Beach
+
+Waterfall
+
+Castle
+
+River valley
+
+Pastoral landscape
+
+Ship at sea
+
+Sewing needle (1cp)
+
+Thread (1cp per 10 yards)
+
+Belt buckle (5sp)
+
+Ring (50sp-25gp)
+
+Scroll (25sp-1gp)
+
+Magic missile
+
+Sending
+
+Prestidigitation
+
+Light
+
+Wand (1gp-10gp)
+
+Light
+
+Prestidigitation
+
+Flask (20sp)
+
+Glass bottles (2sp-5gp each)
+
+Empty
+
+Holy Water
+
+Unidentified potion
+
+Healing potion (allegedly)
+
+Obvious poison
+
+Mysterious alchemic liquid
+
+Lantern (5sp)
+
+Heirloom weapon (5gp-20gp)
+
+Sword
+
+Spear
+
+Bow
+
+Crossbow
+
+Rope (25cp per 100ft)
+
+Book (5gp-50gp)
+
+Holy Book
+
+Novel
+
+History
+
+Bureaucratic
+
+Poetry
+
+Gnosticism
+
+Statuette (25cp-50gp)
+
+Crystal ball (25gp)
+
+Various cups (various kinds)
+
+Bear trap (5gp)
+
+Doll (15cp-2gp)
+
+Furniture (50sp-500gp)
+
+Chair
+
+Table
+
+Bench
+
+Desk
+
+End Table
+
+Couch
+
+Chandelier
+
+Shelves
+
+Cupboard
+
+Bookcase
+
+Lamp (3sp-2gp)
+
+Cookware (25cp-1gp)
+
+Pot
+
+Pan
+
+[add others]
+
+Tinderbox (3sp)
+
+Knapsack (50cp)
+
+Chest (5sp-500gp)
+
+Wooden
+
+Reinforced Wooden
+
+Iron
+
+Steel
+
+Adamantite
+
+Cloth (10sp per yard)
+
+Bedding (10cp-1gp)
+
+Sheets
+
+Mattress
+
+Pillow
+
+Bedframe
+
+Blankets
+
+Rug (75sp)
+
+Shaving razor (40sp)
+
+Watch (1gp-1,000gp)
+
+Clock (10gp-10,000gp)
+
+Ink (1gp per bottle)
+
+Brushes (5sp)
+
+Paper (4cp per sheet)
+
+Tools (20sp-2gp)
+
+Saw
+
+Hammer
+
+Chisel
+
+Sledgehammer
+
+Axe
+
+Gems (50gp-1,000gp)
+
+Sapphire
+
+Emerald
+
+Ruby
+
+Diamond
+
+Topaz
+
+Opal
+
+Toy Soldiers (20sp for a battalion of 10)
+
+Elixirs (10gp-50gp)
+
+Fireproofing
+
+Glue
+
+Cooling
+
+Light
+
+Fumigation
+
+Liquor (50cp-5gp)
+
+Whiskey
+
+Gin
+
+Rum
+
+Wine
+
+Fine Wine
+
+Model Ship (80sp)
+
+Sculpted Paperweights (40sp-1gp 50sp)
+
+Man
+
+Ship
+
+Castle
+
+Dragon
+
+Busts (55sp-2gp50sp)
+
+King
+
+Founder
+
+Famous General
+
+Religious Figure
+
+Good Luck Charm (5cp-10sp)
+
+Rabbit’s Foot
+
+Horseshoe
+
+Silver Cat Talisman
+
+Vial Full of Ladybugs
+
+Garlic Wreath
+
+Mirror (50gp)

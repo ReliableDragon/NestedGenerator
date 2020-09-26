@@ -61,9 +61,37 @@ npc_events
   50 leg
   20 head
   25 foot
+  25 hand
   $
   100 when they $
     100 fell off a horse
     100 had a workplace accident
+    100 were attacked by a(n)
+      100 wolf
+      100 goblin
+      50 hawk
+      10 orc
   25 in a duel
   100 several years ago
+
+10 They are secretly a member of $
+  10 a group of Neo-Orc supporters
+  20 a group of revolutionaries
+  20 a cult devoted to $
+    10 $ god of $
+      10 reviving a dead
+      10 worshiping a
+      $
+      10 pestilence
+      20 wine and drunkenness
+      10 darkness
+      10 madness
+      20 war
+
+  30 They are an informant for $
+    20 the Straka
+    20 the Dolora
+    20 the Corela
+    20 the town guard
+
+  100 When they were a child, they $

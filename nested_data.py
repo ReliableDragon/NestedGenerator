@@ -2,6 +2,7 @@ import re
 import random
 import uuid
 import math
+import logging
 
 class WeightedChoice():
     def __init__(self, weight, choice, tag=1):
@@ -160,6 +161,7 @@ class NestedChoices():
 
             generated_choice = generation_step(generated_choice, dict_and_choice_backtrace, used_choices, level, choices_dict, params)
             generated_choice = self.make_replacements(generated_choice)
+            logging.info(f'generated_choice: {generated_choice}')
             generated_choices.append(generated_choice)
 
         if params['num'] == 1:
@@ -174,15 +176,28 @@ class NestedChoices():
         return generated_choice
 
     def make_subtable_calls(self, generated_choice):
-        subtable_replace = re.compile('@([\w_]+)')
+        subtable_replace = re.compile('@([\w_]+)(\[(\d+),(-?\d+)\])?')
         match = subtable_replace.search(generated_choice)
         while match:
             full_match = match.group(0)
             subtable_id = match.group(1)
+            num_to_gen = match.group(3)
+            uniqueness_level = match.group(4)
+
+            if num_to_gen == None:
+                num_to_gen = 1
+            else:
+                num_to_gen = int(num_to_gen)
+
+            if uniqueness_level == None:
+                uniqueness_level = 0
+            else:
+                uniqueness_level = int(uniqueness_level)
+            logging.info(f'making call to subtable {subtable_id} with num_to_gen={num_to_gen} and uniqueness_level={uniqueness_level}.')
 
             subtable = self.subtables[subtable_id]
 
-            generated_choice = generated_choice.replace(full_match, subtable.gen_choice())
+            generated_choice = generated_choice.replace(full_match, subtable.gen_choice(params={'num':num_to_gen, 'uniqueness_level':uniqueness_level}))
             match = subtable_replace.search(generated_choice)
         return generated_choice
 
@@ -192,6 +207,7 @@ def generation_step(generated_choice, dict_and_choice_backtrace, used_choices, l
 
     tags = list(range(1, generated_choice.count('$') + 1))
     filtered_choice_lists = [list(filter(lambda c: c not in used_choices and c.tag == tag, choices_dict)) for tag in tags]
+    logging.debug(f'filtered_choice_lists, level {level}: {filtered_choice_lists}')
     weighted_choice_lists = [pick_choice(filtered_choice) for filtered_choice in filtered_choice_lists]
     recursed_choice_list = []
 
@@ -214,6 +230,7 @@ def generation_step(generated_choice, dict_and_choice_backtrace, used_choices, l
     for choice in recursed_choice_list:
         generated_choice = generated_choice.replace('$', choice, 1)
 
+    logging.debug(f'generated_choice, level {level}: {generated_choice}')
     return generated_choice
 
 def replace_ranges(generated_choice):
@@ -257,11 +274,18 @@ def pick_choice(filtered_choices):
 # bottom up, we look up the values under each WC in its parent dictionary, which lets us
 # check if there are any left uncovered. If there are, then we break. Otherwise, we will
 # use the dictionary to remove the WC, and go up another level to check again.
+#
+# dict_and_choice_backtrace: Dict, keys are WeightedChoice objects, and values
+# are nested dicts of the same form. The only keys that aren't dicts with WC keys
+# are empty dicts.
+#
+# used_choices: List of WeightedChoice objects.
 def remove_childless_parents(dict_and_choice_backtrace, used_choices):
-    for dict, wc in dict_and_choice_backtrace[::-1]:
-        if len(list(filter(lambda d: d not in used_choices, dict[wc].keys()))) != 0:
+    for dict, weighted_choice in dict_and_choice_backtrace[::-1]:
+        tag_filtered_choices = [wc for wc in dict[weighted_choice].keys() if wc.tag == weighted_choice.tag]
+        if len(list(filter(lambda d: d not in used_choices, tag_filtered_choices))) != 0:
             break
-        used_choices.append(wc)
+        used_choices.append(weighted_choice)
 
 def recursive_dict_print(dict, indent=0):
     val = ''
@@ -354,6 +378,7 @@ def split_into_lines(s):
     return re.split('\r?\n', s)
 
 if __name__ == "__main__":
+    # logging.basicConfig(level=logging.DEBUG)
     choices = NestedChoices.load_from_file('test_places.txt')
     subtable = NestedChoices.load_from_string_list('countries_table', ['Germany', 'France', 'UK'], [5, 3, 1])
     choices.register_subtable(subtable)

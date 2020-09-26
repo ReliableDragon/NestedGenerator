@@ -11,8 +11,15 @@ test_places
   3 Iowa City
   1 Des Moines
 
-1000 $, washington
+100 $, washington
   1 $, Seattle [1-5]
     1 $, Capitol Hill [10-3N]
       1
     1 @countries_table
+
+10000 San Francisco, $$
+  1 California, $
+    1 USA
+  $
+  1
+  1 , The World
