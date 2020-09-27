@@ -2,7 +2,7 @@
 
 import random as rand
 import math
-from nested_data import NestedChoices
+from nested_choices import NestedChoices
 
 def create_character(job_override=None):
   name_syllables = ['al', 'ben', 'cor', 'dan', 'fan', 'fer', 'frey', 'gra', 'gar', 'ger', 'hin', 'har',

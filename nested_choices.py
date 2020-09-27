@@ -5,6 +5,8 @@ import math
 import logging
 import argparse
 
+import choice_generator as choice_generator_mod
+
 class WeightedChoice():
     def __init__(self, weight, choice, tag=1):
         self.weight = int(weight)
@@ -124,7 +126,12 @@ class NestedChoices():
 
                 choice = choice[new_indent:]
                 try:
-                    weighted_choice = WeightedChoice(*choice.split(' ', 1), tag=tag_stack[-1])
+                    try:
+                        weighted_choice = WeightedChoice(*choice.split(' ', 1), tag=tag_stack[-1])
+                    except ValueError:
+                        weight, choice = choice.split('%', 1)
+                        choice = '%' + choice
+                        weighted_choice = WeightedChoice(weight, choice, tag=tag_stack[-1])
                 except TypeError:
                     # Empty choice.
                     weighted_choice = WeightedChoice(choice, '', tag_stack[-1])
@@ -169,33 +176,42 @@ class NestedChoices():
     # under 'each' that would not be allowed, since the first value repeated itself.
     # Not yet implemented.
     def gen_choices(self, params={'num': 1, 'uniqueness_level': 0, 'uniqueness_mode':'each'}):
+        return self._gen_choices(params)[0]
+
+    # The same as gen_choices, but it has extra state data for internal use.
+    def _gen_choices(self, params={'num': 1, 'uniqueness_level': 0, 'uniqueness_mode':'each'}):
         generated_choices = []
-        used_choices = []
+        # used_choices = []
+        # state = {}
+        choice_generator = choice_generator_mod.ChoiceGenerator(self)
 
         for i in range(params['num']):
-            generated = False
+            # generated = False
             generated_choice = '$'
             dict_and_choice_backtrace = []
             level = 1
             choices_dict = self.choices
 
-            generated_choice = generation_step(generated_choice, dict_and_choice_backtrace, used_choices, level, choices_dict, params)
-            generated_choice = self.make_replacements(generated_choice)
-            logging.info(f'generated_choice: {generated_choice}')
+            generated_choice, state = choice_generator.gen_choice(choices_dict, params)
+            # generated_choice = self.generation_step(generated_choice, dict_and_choice_backtrace, used_choices, level, choices_dict, params)
+            # generated_choice = self.make_replacements(generated_choice)
+            # logging.info(f'generated_choice: {generated_choice}')
             generated_choices.append(generated_choice)
 
         # if params['num'] == 1:
         #     return generated_choice
         # else:
-        return generated_choices
+        return generated_choices, state
 
-    def make_replacements(self, generated_choice):
+    # #testing in another file
+    # def make_replacements(self, generated_choice):
         generated_choice = replace_ranges(generated_choice)
         generated_choice = self.make_subtable_calls(generated_choice)
 
         return generated_choice
 
-    def make_subtable_calls(self, generated_choice):
+    # #testing in another file
+    # def make_subtable_calls(self, generated_choice):
         subtable_replace = re.compile('@([a-zA-Z_]+)(\[(\d+)(-\d+)?, ?(-?\d+)\])?')
         match = subtable_replace.search(generated_choice)
         while match:
@@ -235,76 +251,117 @@ class NestedChoices():
             match = subtable_replace.search(generated_choice)
         return generated_choice
 
-def replace_repeated_subtable_clauses(generated_choice, subtable_choices, subtable_id):
-    logging.debug(f'subtable generated values: {subtable_choices}')
-    # Matches using results beyond the first are of the form '@\dsubtable_id'.
-    i = 2
-    for choice in subtable_choices[1:]:
-        # Add two, because we start counting at 1, and have already used
-        # one value above.
-        numbered_id = '@' + str(i) + subtable_id
-        logging.debug(f'subtable numbered_id: {numbered_id}')
-        generated_choice = process_brace_clause(generated_choice, numbered_id, delete=False)
-        generated_choice = generated_choice.replace(numbered_id, choice, 1)
-        i += 1
+    # def generation_step(self, generated_choice, dict_and_choice_backtrace, used_choices, level, choices_dict, params):
+        if '$' not in generated_choice:
+            return generated_choice
 
-    numbered_id = '@' + str(i) + subtable_id
-    while numbered_id in generated_choice:
-        logging.debug(f'Removing subtable clause, numbered_id: {numbered_id}')
-        generated_choice = process_brace_clause(generated_choice, numbered_id, delete=True)
-        i += 1
-        numbered_id = '@' + str(i) + subtable_id
-    return generated_choice
+        tags = list(range(1, generated_choice.count('$') + 1))
+        # filtered_choice_lists = [list(filter(lambda c: c not in used_choices and c.tag == tag, choices_dict)) for tag in tags]
+        # logging.debug(f'filtered_choice_lists, level {level}: {filtered_choice_lists}')
+        # weighted_choice_lists = [pick_choice(filtered_choice) for filtered_choice in filtered_choice_lists] # removed for testing
+        recursed_choice_list = []
 
-def process_brace_clause(generated_choice, numbered_id, delete=False):
-    choice_loc = generated_choice.index(numbered_id)
-    try:
-        first_brace = generated_choice.rindex('{', 0, choice_loc)
-        last_brace = generated_choice.index('}', choice_loc)
-    except ValueError:
-        logging.info(f'no braces found for numbered_id "{numbered_id}" in choice "{generated_choice}".')
-        return generated_choice
-    if delete:
-        # Delete everything inside the braces.
-        result = generated_choice[:first_brace] + generated_choice[last_brace+1:]
-    else:
-        # Remove the braces.
-        result = generated_choice[:first_brace] + generated_choice[first_brace+1:last_brace] + generated_choice[last_brace+1:]
-
-    logging.debug(f'choice after processing braces: {result}')
-    return result
-
-def generation_step(generated_choice, dict_and_choice_backtrace, used_choices, level, choices_dict, params):
-    if '$' not in generated_choice:
-        return generated_choice
-
-    tags = list(range(1, generated_choice.count('$') + 1))
-    filtered_choice_lists = [list(filter(lambda c: c not in used_choices and c.tag == tag, choices_dict)) for tag in tags]
-    logging.debug(f'filtered_choice_lists, level {level}: {filtered_choice_lists}')
-    weighted_choice_lists = [pick_choice(filtered_choice) for filtered_choice in filtered_choice_lists]
-    recursed_choice_list = []
-
-    for weighted_choice in weighted_choice_lists:
-        if level == params['uniqueness_level']:
-            used_choices.append(weighted_choice)
-            remove_childless_parents(dict_and_choice_backtrace, used_choices)
-        # If there's nothing in the corresponding list, we're at a leaf node
-        # and are done generating this choice.
-        if not choices_dict[weighted_choice]:
-            if params['uniqueness_level'] == -1:
+        # for weighted_choice in weighted_choice_lists:
+        # for filtered_choice in filtered_choice_lists: # testing
+        for tag in tags:
+            filtered_choice_list = self.filter_choices_dict(tag, used_choices, choices_dict) #testing
+            logging.debug(f'filtered_choice_list, level {level}: {filtered_choice_list}')
+            weighted_choice = pick_choice(filtered_choice_list) # testing
+            if level == params['uniqueness_level']:
                 used_choices.append(weighted_choice)
                 remove_childless_parents(dict_and_choice_backtrace, used_choices)
+            # If there's nothing in the corresponding list, we're at a leaf node
+            # and are done generating this choice.
+            if not choices_dict[weighted_choice]:
+                if params['uniqueness_level'] == -1:
+                    used_choices.append(weighted_choice)
+                    remove_childless_parents(dict_and_choice_backtrace, used_choices)
 
-        dict_and_choice_backtrace.append((choices_dict, weighted_choice))
-        recursed_choice = generation_step(weighted_choice.choice, dict_and_choice_backtrace, used_choices, level+1, choices_dict[weighted_choice], params)
-        recursed_choice_list.append(recursed_choice)
-        dict_and_choice_backtrace.pop()
+            dict_and_choice_backtrace.append((choices_dict, weighted_choice))
+            recursed_choice = self.generation_step(weighted_choice.choice, dict_and_choice_backtrace, used_choices, level+1, choices_dict[weighted_choice], params)
+            recursed_choice_list.append(recursed_choice)
+            dict_and_choice_backtrace.pop()
 
-    for choice in recursed_choice_list:
-        generated_choice = generated_choice.replace('$', choice, 1)
+            # Symbols of the form ${N} allow manual overriding of the recursion ordering.
+            # This makes it possible to choose a state-determining value before making
+            # a choice that requires that state.
+            manual_ordering_override = '${' + str(tag) + '}'
+            if generated_choice.find(manual_ordering_override) != -1:
+                generated_choice.replace(manual_ordering_override, recursed_choice, 1)
+            else:
+                generated_choice = generated_choice.replace('$', recursed_choice, 1)
+            logging.debug(f'generated_choice, level {level}: {generated_choice}')
 
-    logging.debug(f'generated_choice, level {level}: {generated_choice}')
-    return generated_choice
+            self.update_state(generated_choice)
+
+        # for choice in recursed_choice_list:
+            # generated_choice = generated_choice.replace('$', choice, 1)
+
+        # logging.debug(f'generated_choice, level {level}: {generated_choice}')
+        return generated_choice
+
+    # testing in another file
+    # def filter_choices_dict(self, tag, used_choices, choices_dict):
+        filtered_choices = []
+        for choice in choices_dict:
+            if choice.tag != tag:
+                continue
+            if choice in used_choices:
+                continue
+            filtered_choices.append(choice)
+        return filtered_choices
+        # return list(filter(lambda c: c not in used_choices and c.tag == tag, choices_dict))
+
+    # generated_choice: A choice generated during the recursion process which
+    # is fully generated. (i.e. has no more '$' in it.)
+    # def update_state(self, generated_choice):
+        if '%' not in generated_choice:
+            return
+        matches = re.finall('%(\w*):(\w*)%', generated_choice)
+        for match in matches:
+            self.data[match[0]] = match[1]
+
+    def call_subtable(self, subtable_id, params):
+        return self.subtables[subtable_id]._gen_choices(params)
+
+# def replace_repeated_subtable_clauses(generated_choice, subtable_choices, subtable_id):
+#     logging.debug(f'subtable generated values: {subtable_choices}')
+#     # Matches using results beyond the first are of the form '@\dsubtable_id'.
+#     i = 2
+#     for choice in subtable_choices[1:]:
+#         # Add two, because we start counting at 1, and have already used
+#         # one value above.
+#         numbered_id = '@' + str(i) + subtable_id
+#         logging.debug(f'subtable numbered_id: {numbered_id}')
+#         generated_choice = process_brace_clause(generated_choice, numbered_id, delete=False)
+#         generated_choice = generated_choice.replace(numbered_id, choice, 1)
+#         i += 1
+#
+#     numbered_id = '@' + str(i) + subtable_id
+#     while numbered_id in generated_choice:
+#         logging.debug(f'Removing subtable clause, numbered_id: {numbered_id}')
+#         generated_choice = process_brace_clause(generated_choice, numbered_id, delete=True)
+#         i += 1
+#         numbered_id = '@' + str(i) + subtable_id
+#     return generated_choice
+#
+# def process_brace_clause(generated_choice, numbered_id, delete=False):
+#     choice_loc = generated_choice.index(numbered_id)
+#     try:
+#         first_brace = generated_choice.rindex('{', 0, choice_loc)
+#         last_brace = generated_choice.index('}', choice_loc)
+#     except ValueError:
+#         logging.info(f'no braces found for numbered_id "{numbered_id}" in choice "{generated_choice}".')
+#         return generated_choice
+#     if delete:
+#         # Delete everything inside the braces.
+#         result = generated_choice[:first_brace] + generated_choice[last_brace+1:]
+#     else:
+#         # Remove the braces.
+#         result = generated_choice[:first_brace] + generated_choice[first_brace+1:last_brace] + generated_choice[last_brace+1:]
+#
+#     logging.debug(f'choice after processing braces: {result}')
+#     return result
 
 def replace_ranges(generated_choice):
     num_replace = re.compile('\[(\d+)-(\d+)(G|N)?\]')
@@ -332,7 +389,8 @@ def replace_ranges(generated_choice):
 def is_tag_marker(choice):
     return re.match('(  )+\$', choice)
 
-def pick_choice(filtered_choices):
+#testing in another file
+# def pick_choice(filtered_choices):
     total_weight = sum([wc.weight for wc in filtered_choices])
     assert total_weight > 0, f'Total weight was <= 0, most likely you wrote a generation that removed all valid choices from a config. Choices given were: {filtered_choices}'
     rand = random.randint(1, total_weight)
@@ -353,7 +411,8 @@ def pick_choice(filtered_choices):
 # are empty dicts.
 #
 # used_choices: List of WeightedChoice objects.
-def remove_childless_parents(dict_and_choice_backtrace, used_choices):
+# testing in another file
+# def remove_childless_parents(dict_and_choice_backtrace, used_choices):
     for dict, weighted_choice in dict_and_choice_backtrace[::-1]:
         tag_filtered_choices = [wc for wc in dict[weighted_choice].keys() if wc.tag == weighted_choice.tag]
         if len(list(filter(lambda d: d not in used_choices, tag_filtered_choices))) != 0:
@@ -405,9 +464,12 @@ if __name__ == "__main__":
     logging_level = logging.WARNING
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--debug', action='store_true')
+    parser.add_argument('--info', action='store_true')
     args = parser.parse_args()
     if args.debug:
         logging_level = logging.DEBUG
+    elif args.info:
+        logging_level = logging.INFO
     logging.basicConfig(level=logging_level)
 
     choices = NestedChoices.load_from_file('test_places.txt')

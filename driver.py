@@ -5,7 +5,7 @@ import re
 
 import random_npc
 import random_shops
-from nested_data import NestedChoices
+from nested_choices import NestedChoices
 
 HELP_TEXT = """This script generates random things. The things you can request are:
 \tcharacter - Generate a random character.

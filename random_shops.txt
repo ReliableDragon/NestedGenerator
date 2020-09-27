@@ -15,4 +15,4 @@ shop_interiors:shop_interiors.txt
   $
   1 @generic_shops
   $
-  1 @shop_interiors[2-3, 1], {@3shop_interiors, }and @2shop_interiors
+  1 @shop_interiors[2-3, 1], {@3shop_interiors, }and @2shop_interiorsz

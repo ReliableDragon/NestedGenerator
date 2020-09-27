@@ -1,7 +1,7 @@
 import random
 import re
 
-from nested_data import NestedChoices
+from nested_choices import NestedChoices
 
 def gen_shop(shop_override=None):
     shop_choices = NestedChoices.load_from_file('random_shops.txt')
