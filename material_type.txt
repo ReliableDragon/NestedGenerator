@@ -1,0 +1,16 @@
+material_type
+
+100 wooden
+80 hardwood
+75 ceramic
+75 reinforced wooden
+65 copper
+55 bronze
+50 iron
+25 steel
+5 glass
+5 silver
+3 bone
+3 gold
+2 ice
+1 adamantite

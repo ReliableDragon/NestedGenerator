@@ -1,54 +1,57 @@
-drinking contest
+character_interactions
+misc_items:misc_items.txt
 
-race (kid)
+3 challenge them to drinking contest
 
-insult
+1  challenge them to a race
 
-compliment
+3 insult them
 
-staring
+3 compliment them
 
-tries to sell them something
+10 stare at them
 
-asks for directions
+10 try to sell them @misc_items
 
-tries to pick their pockets (dc 10 perception)
+3 ask them for directions
 
-pointedly ignore
+5 try to pick their pockets (dc 10 perception)
 
-ask to settle a dispute
-  who is taller?
-  do halflings really exist?
-  was general brigiotto really wounded in every battle he commanded?
-  which of them is better at:
-    pottery?
-    blacksmithing?
-    watchmaking?
-    flower arranging?
-    poetry?
-  is the captain of the guard really a level 20 paladin?
+10 pointedly ignore them
 
-require to pay a toll
+3 ask them to settle a dispute over $
+  10 who is taller
+  5 if halflings really exist
+  10 if general brigiotto was really wounded in every battle he commanded
+  10 which of them is better at $
+    10 pottery
+    10 blacksmithing
+    10 watchmaking
+    10 flower arranging
+    10 poetry
+  1 if the captain of the guard is really a level 20 paladin
 
-invite into shop
+1 require them to pay a toll
 
-ask for news
+10 invite them into their shop
 
-ask for spare change
+7 ask them for news
 
-hide from them, because they are:
-  doing crime.
-  scared of martial folks.
-  a kid, awed at seeing real adventurers.
-  expecting bloodshed, and trying to leave quickly.
-  playing hide and seek.
+7 ask them for spare change
 
-wave
+2 hide from them, because they are $
+  5 doing crime.
+  3 scared of martial folks.
+  5 a kid, awed at seeing real adventurers.
+  1 expecting bloodshed, and trying to leave quickly.
+  1 playing hide and seek.
 
-smile and nod
+10 wave at them
 
-gossip about with their companions
+10 smile and nod
 
-curse
+5 gossip about them with their companions
 
-avoid eye contact
+3 curse at them
+
+10 avoid eye contact

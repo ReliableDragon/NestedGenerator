@@ -204,12 +204,16 @@ class NestedChoices():
             base_num_to_gen = match.group(3)
             end_num_to_gen = match.group(4)
             uniqueness_level = match.group(5)
+            logging.debug(f'full_match: {full_match}')
 
             # If both of these are filled out, we have a variable-length subtable call
             if base_num_to_gen != None and end_num_to_gen != None:
-                num_to_gen = random.randint(int(base_num_to_gen), int(end_num_to_gen[1:]))
-
-            if base_num_to_gen == None:
+                end_num_to_gen = end_num_to_gen[1:]
+                logging.debug('Generating random length subtable call.')
+                logging.debug(f'base_num_to_gen: {base_num_to_gen}')
+                logging.debug(f'end_num_to_gen: {end_num_to_gen}')
+                num_to_gen = random.randint(int(base_num_to_gen), int(end_num_to_gen))
+            elif base_num_to_gen == None:
                 num_to_gen = 1
             else:
                 num_to_gen = int(base_num_to_gen)
@@ -218,6 +222,7 @@ class NestedChoices():
                 uniqueness_level = 0
             else:
                 uniqueness_level = int(uniqueness_level)
+
             logging.info(f'making call to subtable {subtable_id} with num_to_gen={num_to_gen} and uniqueness_level={uniqueness_level}.')
 
             subtable = self.subtables[subtable_id]
@@ -225,52 +230,31 @@ class NestedChoices():
 
             generated_choice = process_brace_clause(generated_choice, '@' + subtable_id, delete=False)
             generated_choice = generated_choice.replace(full_match, subtable_choices[0], 1)
-
-            # subtable = self.subtables[subtable_id]
-            # subtable_choices = subtable.gen_choices(params={'num':num_to_gen, 'uniqueness_level':uniqueness_level})
-            # logging.debug(f'subtable generated values: {subtable_choices}')
-            #
-            # generated_choice = generated_choice.replace(full_match, subtable_choices[0], 1)
-            # # Matches using results beyond the first are of the form '@\dsubtable_id'.
-            # i = 2
-            # for choice in subtable_choices[1:]:
-            #     # Add two, because we start counting at 1, and have already used
-            #     # one value above.
-            #     numbered_id = '@' + str(i) + subtable_id
-            #     logging.debug(f'subtable numbered_id: {numbered_id}')
-            #     generated_choice = process_brace_clause(generated_choice, numbered_id, delete=False)
-            #     generated_choice = generated_choice.replace(numbered_id, choice, 1)
-            # numbered_id = '@' + str(i) + subtable_id
-            # while numbered_id in generated_choice:
-            #     logging.debug(f'Removing subtable clause, numbered_id: {numbered_id}')
-            #     generated_choice = process_brace_clause(generated_choice, numbered_id, delete=True)
-            #     i += 1
-            #     numbered_id = '@' + str(i+2) + subtable_id
-            generated_choice = self.replace_repeated_subtable_clauses(generated_choice, subtable_choices, subtable_id)
+            generated_choice = replace_repeated_subtable_clauses(generated_choice, subtable_choices, subtable_id)
 
             match = subtable_replace.search(generated_choice)
         return generated_choice
 
-    def replace_repeated_subtable_clauses(self, generated_choice, subtable_choices, subtable_id):
-        logging.debug(f'subtable generated values: {subtable_choices}')
-        # Matches using results beyond the first are of the form '@\dsubtable_id'.
-        i = 2
-        for choice in subtable_choices[1:]:
-            # Add two, because we start counting at 1, and have already used
-            # one value above.
-            numbered_id = '@' + str(i) + subtable_id
-            logging.debug(f'subtable numbered_id: {numbered_id}')
-            generated_choice = process_brace_clause(generated_choice, numbered_id, delete=False)
-            generated_choice = generated_choice.replace(numbered_id, choice, 1)
-            i += 1
-
+def replace_repeated_subtable_clauses(generated_choice, subtable_choices, subtable_id):
+    logging.debug(f'subtable generated values: {subtable_choices}')
+    # Matches using results beyond the first are of the form '@\dsubtable_id'.
+    i = 2
+    for choice in subtable_choices[1:]:
+        # Add two, because we start counting at 1, and have already used
+        # one value above.
         numbered_id = '@' + str(i) + subtable_id
-        while numbered_id in generated_choice:
-            logging.debug(f'Removing subtable clause, numbered_id: {numbered_id}')
-            generated_choice = process_brace_clause(generated_choice, numbered_id, delete=True)
-            i += 1
-            numbered_id = '@' + str(i+2) + subtable_id
-        return generated_choice
+        logging.debug(f'subtable numbered_id: {numbered_id}')
+        generated_choice = process_brace_clause(generated_choice, numbered_id, delete=False)
+        generated_choice = generated_choice.replace(numbered_id, choice, 1)
+        i += 1
+
+    numbered_id = '@' + str(i) + subtable_id
+    while numbered_id in generated_choice:
+        logging.debug(f'Removing subtable clause, numbered_id: {numbered_id}')
+        generated_choice = process_brace_clause(generated_choice, numbered_id, delete=True)
+        i += 1
+        numbered_id = '@' + str(i) + subtable_id
+    return generated_choice
 
 def process_brace_clause(generated_choice, numbered_id, delete=False):
     choice_loc = generated_choice.index(numbered_id)

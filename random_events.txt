@@ -1,213 +1,215 @@
-Wizard teleports into a bar, asks, “Did I leave my hat here?” get it back, and teleports away.
+random_events
 
-Man painting on the street. Has a small mustache just below his nose, and his paintings are horrible.
+1 Wizard teleports in, asks, “Did I leave my hat here?” get it back, and teleports away.
 
-See a kobold snatch a purse, and flee into a sewer grate.
+1 Man painting on the street. Has a small mustache just below his nose, and his paintings are horrible.
 
-Street cart selling fresh vegetables.
+1 See a kobold snatch a purse, and flee into a sewer grate.
 
-Guards come down the street, escorting a carriage to the palace.
+1 Street cart selling fresh vegetables.
 
-Decree being read.
+1 Guards come down the street, escorting a carriage to the palace.
 
-Guards pursuing a pickpocket.
+1 Decree being read.
 
-Brawl outside a tavern.
+1 Guards pursuing a pickpocket.
 
-Someone throws a tomato out their window at a drunk man making too much noise.
+1 Brawl outside a tavern.
 
-Man passed out in gutter.
+1 Someone throws a tomato out their window at a drunk man making too much noise.
 
-Street procession honoring a local holiday/custom.
+1 Man passed out in gutter.
 
-Circle of frogs, all facing inward. If you disrupt the circle, the frogs will all dash away.
+1 Street procession honoring a local holiday/custom.
 
-Pigeon swarm!
+1 Circle of frogs, all facing inward. If you disrupt the circle, the frogs will all dash away.
 
-Chamber pot emptied onto street.
+1 Pigeon swarm!
 
-Strong wind causes a duststorm, lowering visibility.
+1 Chamber pot emptied onto street.
 
-Children playing hoop stick run down alleyway. (And may pickpocket the players.)
+1 Strong wind causes a duststorm, lowering visibility.
 
-Two men arguing about politics on a corner.
+1 Children playing hoop stick run down alleyway. (And may pickpocket the players.)
 
-Women doing washing at the side of the street.
+1 Two men arguing about politics on a corner.
 
-Man sitting on the curb eating some bread.
+1 Women doing washing at the side of the street.
 
-Drunk man singing his way down the street.
+1 Man sitting on the curb eating some bread.
 
-Cart heading to a market carrying produce.
+1 Drunk man singing his way down the street.
 
-Cart heading to artisan’s district carrying raw materials.
+1 Cart heading to a market carrying produce.
 
-Precious metals caravan, with several armed guards.
+1 Cart heading to artisan’s district carrying raw materials.
 
-Landlord collecting rent.
+1 Precious metals caravan, with several armed guards.
 
-Two people yelling insults at each other from their second story rooms across the street.
+1 Landlord collecting rent.
 
-Children mock sword-fighting.
+1 Two people yelling insults at each other from their second story rooms across the street.
 
-Fighter walking towards guard barracks with several goblin trophies for a reward.
+1 Children mock sword-fighting.
 
-Procession of monks, beating wooden bells.
+1 Fighter walking towards guard barracks with several goblin trophies for a reward.
 
-Lightning storm, but no rain.
+1 Procession of monks, beating wooden bells.
 
-Fisherman, carrying fish to market.
+1 Lightning storm, but no rain.
 
-Dog chasing a cat.
+1 Fisherman, carrying fish to market.
 
-Cat chasing a rat.
+1 Dog chasing a cat.
 
-Rat running away with “what appears to be some sort of bread covered in cheese and tomato sauce.”
+1 Cat chasing a rat.
 
-Someone beating their rugs overhead.
+1 Rat running away with “what appears to be some sort of bread covered in cheese and tomato sauce.”
 
-Woman going to fill water jugs at fountain.
+1 Someone beating their rugs overhead.
 
-Mugging.
+1 Woman going to fill water jugs at fountain.
 
-Men playing darts against the side of a building.
+1 Mugging.
 
-Poetry competition.
+1 Men playing darts against the side of a building.
 
-Old man napping on his porch.
+1 Poetry competition.
 
-Couple holding hands in an alleyway. (Straka and Dolora?)
+1 Old man napping on his porch.
 
-Juggler.
+1 Couple holding hands in an alleyway. (Straka and Dolora?)
 
-Person in stocks for theft.
+1 Juggler.
 
-Line of rats in a strangely orderly procession. (Rats were the ones who kicked Morse out of Freedonia.)
+1 Person in stocks for theft.
 
-Man and elf trying to conduct business despite not sharing a language.
+1 Line of rats in a strangely orderly procession. (Rats were the ones who kicked Morse out of Freedonia.)
 
-Gnome walking around in a human-sized suit of mechanical armor.
+1 Man and elf trying to conduct business despite not sharing a language.
 
-Two halflings in a trenchcoat. (DC 10)
+1 Gnome walking around in a human-sized suit of mechanical armor.
 
-Guard calls out time, watchmaker argues with him and says his clock is wrong.
+1 Two halflings in a trenchcoat. (DC 10)
 
-Man repairing a wagon axle.
+1 Guard calls out time, watchmaker argues with him and says his clock is wrong.
 
-Cloud of sawdust billows onto street as man uses gust of wind to clear out his workshop.
+1 Man repairing a wagon axle.
 
-Man with squirrels riding all over his shirt walks down the street talking to them.
+1 Cloud of sawdust billows onto street as man uses gust of wind to clear out his workshop.
 
-Two men discuss a robbery, but fall silent quickly as the players approach them.
+1 Man with squirrels riding all over his shirt walks down the street talking to them.
 
-Two guys playing the knife game.
+1 Two men discuss a robbery, but fall silent quickly as the players approach them.
 
-Woodsman splitting wood to sell as firewood.
+1 Two guys playing the knife game.
 
-Man exchanging new lamps for old ones. (He wants the new ones.)
+1 Woodsman splitting wood to sell as firewood.
 
-Child doing his homework outside a shop.
+1 Man exchanging new lamps for old ones. (He wants the new ones.)
 
-Men repairing a street.
+1 Child doing his homework outside a shop.
 
-DC 15 to see a ranger on a rooftop, apparently staking out a building.
+1 Men repairing a street.
 
-Household packing their things into a cart to move.
+1 DC 15 to see a ranger on a rooftop, apparently staking out a building.
 
-Household unpacking their things from a cart.
+1 Household packing their things into a cart to move.
 
-Crazy man telling stories about how the government is controlled by the gnomes, and they’ve invented an automaton that looks just like the emperor, and its existence is such an abomination that it’s caused all rain to stop.
+1 Household unpacking their things from a cart.
 
-Soup kitchen.
+1 Crazy man telling stories about how the government is controlled by the gnomes, and they’ve invented an automaton that looks just like the emperor, and its existence is such an abomination that it’s caused all rain to stop.
 
-Woman passes by in palanquin, on her way to private garden.
+1 Soup kitchen.
 
-Crazy man pokes his head out of the sewers, looks around, then goes back down.
+1 Woman passes by in palanquin, on her way to private garden.
 
-Man clad in all black jumps off rooftop, right onto pickpocket, beats him up, and takes him to the guards. (Batman? No, no, this is “Tab Man”, because he ensures that evildoers pay their dues.) DC 20 check to see him on the roof ahead of time.
+1 Crazy man pokes his head out of the sewers, looks around, then goes back down.
 
-Man in red uses a rope to swing from a building, beat up a produce thief, and take him to the guards. (Spiderman? No, no, this is “Cider Man”, he protects the apple industry in town. He’s red because of the apples, see?) DC 10 check to see him on the roof ahead of time.
+1 Man clad in all black jumps off rooftop, right onto pickpocket, beats him up, and takes him to the guards. (Batman? No, no, this is “Tab Man”, because he ensures that evildoers pay their dues.) DC 20 check to see him on the roof ahead of time.
 
-Squirrel steals bread from a bakery, and is chased by baker.
+1 Man in red uses a rope to swing from a building, beat up a produce thief, and take him to the guards. (Spiderman? No, no, this is “Cider Man”, he protects the apple industry in town. He’s red because of the apples, see?) DC 10 check to see him on the roof ahead of time.
 
-Man has allergic reaction at florist.
+1 Squirrel steals bread from a bakery, and is chased by baker.
 
-Couple walks down the street arguing about the man spending 5gp betting on horse races.
+1 Man has allergic reaction at florist.
 
-Horse races can be heard!
+1 Couple walks down the street arguing about the man spending 5gp betting on horse races.
 
-A man dangles off a balcony, in an attempt not to be seen by his mistress’ husband.
+1 Horse races can be heard!
 
-A funeral procession goes by.
+1 A man dangles off a balcony, in an attempt not to be seen by his mistress’ husband.
 
-A street vendor selling sausages from a cart.
+1 A funeral procession goes by.
 
-Small earthquake.
+1 A street vendor selling sausages from a cart.
 
-Children daring each other to enter a cemetery and touch the crypt.
+1 Small earthquake.
 
-Traveling psychic.
+1 Children daring each other to enter a cemetery and touch the crypt.
 
-Traveling merchant, bearing goods from far-off places.
+1 Traveling psychic.
 
-Antique/pawn shop.
+1 Traveling merchant, bearing goods from far-off places.
 
-People circled around two boxing monkeys, betting on the outcome.
+1 Antique/pawn shop.
 
-Man banging on door of house and yelling to let him in.
+1 People circled around two boxing monkeys, betting on the outcome.
 
-Priest giving religious speech on corner.
+1 Man banging on door of house and yelling to let him in.
 
-Groundskeeper trimming hedges in a park.
+1 Priest giving religious speech on corner.
 
-Groundskeeper digging grave in a cemetery.
+1 Groundskeeper trimming hedges in a park.
 
-Rich person giving away alms outside the back door to their mansion.
+1 Groundskeeper digging grave in a cemetery.
 
-Two men playing Go. (Or chess, shogi, checkers, etc.)
+1 Rich person giving away alms outside the back door to their mansion.
 
-Pack of wild dogs running through the street.
+1 Two men playing Go. (Or chess, shogi, checkers, etc.)
 
-Cart full of wool goes past, on its way to the weavers.
+1 Pack of wild dogs running through the street.
 
-Prisoner on his way to jail escorted past.
+1 Cart full of wool goes past, on its way to the weavers.
 
-Prisoner released from jail.
+1 Prisoner on his way to jail escorted past.
 
-Clothier trying to convince a nobleman that he’s wearing a fine suit, when he’s actually wearing nothing at all. He has several planted passersby helping him out.
+1 Prisoner released from jail.
 
-Mysterious woman at the end of an alleyway brewing something in a cauldron. It turns out to be tea.
+1 Clothier trying to convince a nobleman that he’s wearing a fine suit, when he’s actually wearing nothing at all. He has several planted passersby helping him out.
 
-Pickpocket steals from someone (DC 10 to notice.)
+1 Mysterious woman at the end of an alleyway brewing something in a cauldron. It turns out to be tea.
 
-Children built forts of barrels on opposite sides of the road, and are having a mock war by throwing things at each other.
+1 Pickpocket steals from someone (DC 10 to notice.)
 
-Man going around nailing fliers to message boards.
+1 Children built forts of barrels on opposite sides of the road, and are having a mock war by throwing things at each other.
 
-Drug deal. (DC 10 to notice.)
+1 Man going around nailing fliers to message boards.
 
-Temple bells ring.
+1 Drug deal. (DC 10 to notice.)
 
-Army detachment marches down the street.
+1 Temple bells ring.
 
-Reveille played in the distance.
+1 Army detachment marches down the street.
 
-Manhunt for wanted murderer.
+1 Reveille played in the distance.
 
-Rabid dog.
+1 Manhunt for wanted murderer.
 
-Gnome spy. (DC 20 to notice.)
+1 Rabid dog.
 
-Mailman drops a sack of letters, scattering them all over the street.
+1 Gnome spy. (DC 20 to notice.)
 
-Bakery ovens billowing smoke, because the owner fell asleep.
+1 Mailman drops a sack of letters, scattering them all over the street.
 
-Prisoner running away from jail.
+1 Bakery ovens billowing smoke, because the owner fell asleep.
 
-Trapper returning to town from the wilds.
+1 Prisoner running away from jail.
 
-Nasty smell emanating from an apothecary’s shop, with a coughing and gagging from inside.
+1 Trapper returning to town from the wilds.
 
-Cart breaks an axle, sending goods all over the street.
+1 Nasty smell emanating from an apothecary’s shop, with a coughing and gagging from inside.
 
-Three men in wheeled bathtubs come rolling down the street, apparently racing one another.
+1 Cart breaks an axle, sending goods all over the street.
+
+1 Three men in wheeled bathtubs come rolling down the street, apparently racing one another.

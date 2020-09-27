@@ -1,10 +1,44 @@
 shop_interiors
+misc_items:misc_items.txt
 
 10 is filled with $
   10 cats
   10 plants
+  3 lizards
+  5 fog
+  10 $ statues of $
+    10 small
+    10 scattered
+    10 unsettling
+    $
+    20 various animals
+    10 soldiers
+    10 mythological figures
+    5 a single person
 
 10 has $
   10 wide, broad aisles
   10 narrow, cramped aisles
+  10 a low, claustrophobic roof
   5 twisting, turning paths through the merchandise
+  10 piles of merchandise stacked on simple wooden tables
+  5 a clean, sparse aesthetic, with only a few items on individual pedestals
+
+10 is $
+  10 lit by $
+    10 torches flickering on the wall
+    10 sunlight coming through a window on the front wall
+    10 candles in wall sconces around the room
+    5 a magical ball of light, hovering in the middle of the room
+  1 unlit and dark
+
+10 looks $
+  10 well-kept and clean
+  10 musty and old
+  10 dilapidated and run-down
+
+10 has a $ in the middle of the room
+  10 small fountain
+  10 lamppost
+  10 group of mannequins
+  50 glass display case filled with @misc_items

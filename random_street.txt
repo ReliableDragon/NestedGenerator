@@ -1,0 +1,71 @@
+random_street
+generic_shops:generic_shops.txt
+random_events:random_events.txt
+misc_items:misc_items.txt
+character_interactions:character_interactions.txt
+
+10 A(n) $ street $, bordered by $. $
+  10 wide
+  10 narrow
+  10 shady
+  10 dusty
+  10 noisy
+  5 empty
+  $
+  10 with a $smell of $
+    10 faint
+    5
+    1 strong
+    $
+    10 roasting meat
+    10 baking bread
+    10 sawdust
+    10 mildew
+    5 flowers
+    10 beer
+    10 smoke
+  10 with the sound of $ in the background
+    10 hammers
+    10 clanging metal
+    10 bells
+    10 people talking
+    10 wind
+    10 children playing
+    10 chickens
+    10 clashing weapons
+    10 monks chanting
+  10 with a $
+    10 faint haze hanging over it
+    5 heavy fog present
+    10 layer of soot coating the buildings
+    20 dilapidated look
+    10 row of trees lining the road
+    20 small park along the side of the road
+    10 mansion looming in the distance
+    10 guard post overlooking it from a few blocks further down
+    10 view of the king's castle in the distance
+    10 steep $ slope
+      10 downhill
+      10 uphill
+  $
+  10 a @generic_shops[1-4, -1]{, a @4generic_shops}{, a @3generic_shops}{, and a @2generic_shops}
+  $
+  10 There are a few people $, one of whom will @character_interactions
+    10 walking down the street
+    10 sitting outside their houses
+  10 A cart filled with $ is rolling its way down the street.
+    100 wheat
+    75 corn
+    50 beans
+    20 flax
+    30 potatoes
+    40 tomatoes
+    75 cabbage
+    50 squash
+    30 broccoli
+    10 apples
+    10 pears
+    5 cherries
+    5 @misc_items
+  20 An unusual thing occurs: @random_events
+  20
