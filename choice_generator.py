@@ -6,7 +6,7 @@ from collections import defaultdict
 
 import state_clause_handler
 
-#import nested_choices as nested_choices_mod
+import nested_choices
 
 # Generates a random choice.
 class ChoiceGenerator():
@@ -25,7 +25,6 @@ class ChoiceGenerator():
         generated_choice = '$'
         self.level = 1
         self.dict_and_choice_backtrace = []
-        # self.state = defaultdict(int)
         self.params = params
 
         generated_choice = self.gen_choice_recursive(choices_dict, generated_choice)
@@ -40,10 +39,11 @@ class ChoiceGenerator():
         tags = list(range(1, generated_choice.count('$') + 1))
 
         for tag in tags:
+            logging.info(f'state: {self.state}')
             logging.debug(f'generated_choice, level {self.level}: {generated_choice}')
             filtered_choice_list = self.filter_choices_dict(tag, choices_dict)
             logging.debug(f'filtered_choice_list, level {self.level}: {filtered_choice_list}')
-            weighted_choice = pick_choice(filtered_choice_list)
+            weighted_choice = self.pick_choice(filtered_choice_list)
             logging.debug(f'weighed_choice, level {self.level}: {weighted_choice}')
             weighted_choice.choice = self.make_replacements(weighted_choice.choice)
             logging.debug(f'replaced weighed_choice, level {self.level}: {weighted_choice}')
@@ -98,22 +98,20 @@ class ChoiceGenerator():
     # generated_choice: A choice generated during the recursion process which
     # is fully generated. (i.e. has no more '$' in it.)
     def extract_state(self, generated_choice):
-        # logging.info(f'extracting state from {generated_choice}')
-        if '%' not in generated_choice:
-            return generated_choice
-        matches = re.findall('%(\w*)=([\w"]*)%', generated_choice)
-        # add state modifications
-        #!
-        logging.info(f'matches: {[match for match in matches]}')
-        for match in matches:
-            logging.info(f'Writing to state: {match[0]}, {match[1]}.')
-            self.state[match[0]] = match[1]
-        state_extracted = re.sub('%(\w*)=([\w"]*)%', '', generated_choice, count=0)
-        logging.info(f'state: {self.state}')
-        return state_extracted
-        # return ''
-        # logging.debug(f'extract_state generated_choice, level {self.level}: {generated_choice}')
-        # return generated_choice
+        start = generated_choice.find(' %')
+        end = generated_choice.find('%', start+2) # +2 because len(' %') == 2
+        while start != -1:
+            clause = generated_choice[start:end+1]
+            logging.info(f'start: {start}, end: {end}, clause "{clause}" in choice "{generated_choice}"')
+            state, value = state_clause_handler.evaluate_state_modification(clause, self.state)
+            logging.info(f'state: {state}, value: {value}')
+            self.state[state] = value
+
+            generated_choice = generated_choice[:start] + generated_choice[end+1:]
+
+            start = generated_choice.find(' %', end+1)
+            end = generated_choice.find('%', start+2) # +2 because len(' %') == 2
+        return generated_choice
 
     def merge_state(self, state):
         for key, value in state.items():
@@ -163,11 +161,8 @@ class ChoiceGenerator():
             else:
                 val = random.randint(start, end)
 
-            # add state modifications
             logging.info(f'match {full_match} for generated choice {generated_choice} with match.end() = {match.end()}')
-            # logging.info(f'with match.end() = {generated_choice[match.end()]}')
             if match.end() < len(generated_choice) and generated_choice[match.end()] == '%':
-                # val = do_
                 state_clause_start = match.end()
                 state_clause_end = generated_choice.find('%', state_clause_start+1)
                 clause = generated_choice[state_clause_start:state_clause_end+1]
@@ -176,13 +171,6 @@ class ChoiceGenerator():
                 val = state_clause_handler.evaluate_value_modification(clause, val, self.state)
                 logging.info(f'val_post: {val}')
                 generated_choice = generated_choice[:state_clause_start] + generated_choice[state_clause_end+1:]
-                # if state_clause_handler.type == 'conditional_value_modification':
-                #     lhs_state = None
-                #     if state_clause_handler.lhs_is_state:
-                #         lhs_state = self.state[state_clause_handler.lhs]
-                #     rhs_state = None
-                #     if state_clause_handler.lhs_is_state:
-                #         rhs_state = self.state[state_clause_handler.lhs]
 
             generated_choice = generated_choice.replace(full_match, str(val))
             match = num_replace.search(generated_choice)
@@ -229,15 +217,25 @@ class ChoiceGenerator():
             match = subtable_replace.search(generated_choice)
         return generated_choice
 
-def pick_choice(filtered_choices):
-    total_weight = sum([wc.weight for wc in filtered_choices])
-    assert total_weight > 0, f'Total weight was <= 0, most likely you wrote a generation that removed all valid choices from a config. Choices given were: {filtered_choices}'
-    rand = random.randint(1, total_weight)
+    def pick_choice(self, filtered_choices):
+        clause_modded_weights_by_uuid = {wc.uuid: self.get_clause_modded_weight(wc) for wc in filtered_choices}
+        logging.info(f'CMC: {clause_modded_weights_by_uuid}')
+        total_weight = sum(clause_modded_weights_by_uuid.values())
+        assert total_weight > 0, f'Total weight was <= 0, most likely you wrote a generation that removed all valid choices from a config. Choices given were: {filtered_choices}'
+        rand = random.randint(1, total_weight)
 
-    for wc in filtered_choices:
-        rand -= wc.weight
-        if rand <= 0:
-            return wc
+        for wc in filtered_choices:
+            logging.info(f'rand: {rand}|wc: {wc}')
+            rand -= clause_modded_weights_by_uuid[wc.uuid]
+            if rand <= 0:
+                return wc
+        raise ValueError(f'Failed to select a choice when provided {filtered_choices}.')
+
+    def get_clause_modded_weight(self, wc):
+        if wc.clause == None:
+            return wc.weight
+        clause_modded_weight = state_clause_handler.evaluate_value_modification(wc.clause, wc.weight, self.state)
+        return clause_modded_weight
 
 def replace_repeated_subtable_clauses(generated_choice, subtable_choices, subtable_id):
     logging.debug(f'subtable generated values: {subtable_choices}')

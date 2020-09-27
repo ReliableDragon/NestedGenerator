@@ -2,13 +2,13 @@ test_places
 
 1 $, iowa
   500 $[2], Cedar Rapids$[1]
-    1 , the city of five seasons %"a"=="a"->smell:+50
+    1 , the city of five seasons %"a"=="a"->smell:+50%
     10 , the city of five smells %5>4->smell:+100%
     $
     50 New Bo
     30 Collins Road
     10 Cedar Valley Nature Trail
-    1%smell>50->+1000% Quaker Oats [1-5]%*smell%
+    1%smell>50->+1000% Quaker Oats [10-10]%*smell%
   3 Iowa City
   1 Des Moines
 
@@ -19,7 +19,7 @@ test_places
     1 {Country 1: @countries_table[2,-1]}{ Country 2: @2countries_table}{ Country 3: @3countries_table}
 
 1000 San Francisco, $$
-  1 California, $%wildfires="hella"%
+  1 California, $ %wildfires:="hella"%
     1 USA
   $
   1
