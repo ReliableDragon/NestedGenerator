@@ -5,25 +5,25 @@ misc_items:misc_items.txt
 character_interactions:character_interactions.txt
 
 10 A(n) $ street $, bordered by $. $
-  10 wide
-  10 narrow
-  10 shady
-  10 dusty
+  10%+=wealth% wide %wealth:+=5%
+  10%-=wealth% narrow %wealth:-=5%
+  10%+=wealth% shady %wealth:+=2%
+  10 dusty %wealth:-=2%
   10 noisy
   5 empty
   $
   10 with a $smell of $
-    10 faint
+    10 faint 
     5
-    1 strong
+    1 strong 
     $
-    10 roasting meat
+    10%+=wealth/10% roasting meat %wealth:+=1%
     10 baking bread
     10 sawdust
-    10 mildew
-    5 flowers
+    10%-=wealth/10% mildew %wealth:-=5%
+    5%+=wealth/5% flowers %wealth:+=5%
     10 beer
-    10 smoke
+    10%-=wealth/5% smoke %wealth:-=3%
   10 with the sound of $ in the background
     10 hammers
     10 clanging metal
@@ -34,16 +34,17 @@ character_interactions:character_interactions.txt
     10 chickens
     10 clashing weapons
     10 monks chanting
+    3 magic humming
   10 with a $
     10 faint haze hanging over it
     5 heavy fog present
-    10 layer of soot coating the buildings
-    20 dilapidated look
-    10 row of trees lining the road
-    20 small park along the side of the road
-    10 mansion looming in the distance
-    10 guard post overlooking it from a few blocks further down
-    10 view of the king's castle in the distance
+    10%-=wealth% layer of soot coating the buildings %wealth:-=5%
+    20%-=2*wealth% dilapidated look %wealth:-=10%
+    10%+=wealth% row of trees lining the road %wealth:+=10%
+    20%+=wealth% small park along the side of the road %wealth:+=5%
+    5%+=wealth% mansion looming in the distance %wealth:+=15%
+    10%+=wealth% guard post overlooking it from a few blocks further down %wealth:+=3%
+    1%+=2*wealth% view of the king's castle in the distance %wealth:+=5%
     10 steep $ slope
       10 downhill
       10 uphill
@@ -54,6 +55,7 @@ character_interactions:character_interactions.txt
     10 walking down the street
     10 sitting outside their houses
   10 A cart filled with $ is rolling its way down the street.
+    100%+=3*wealth% trash
     100 wheat
     75 corn
     50 beans
@@ -63,9 +65,9 @@ character_interactions:character_interactions.txt
     75 cabbage
     50 squash
     30 broccoli
-    10 apples
-    10 pears
-    5 cherries
+    10%+=wealth% apples
+    10%+=wealth% pears
+    5%+=wealth% cherries
     5 @misc_items
   20 An unusual thing occurs: @random_events
   20

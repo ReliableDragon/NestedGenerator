@@ -4,6 +4,7 @@ import re
 
 import clause_calculator
 import set_up_logging
+import choices_util
 
 from collections import defaultdict
 
@@ -11,13 +12,18 @@ CALCULATION_CLAUSE_RE = '([\^\-\+/\*\(\)0-9\w]+|"[\w ]+")'
 COMPARATOR_RE = '([=<>!]{1,2})'
 STATE_RE = '([a-zA-Z]\w+)'
 EFFECT_RE = '([\^\-\+/\*]=|=)'
+CONDITION_RE = f'{CALCULATION_CLAUSE_RE}{COMPARATOR_RE}{CALCULATION_CLAUSE_RE}'
+STATE_MOD_EFFECT_RE = f'{STATE_RE}:{EFFECT_RE}{CALCULATION_CLAUSE_RE}'
 
 VALID_COMPARISONS = ['==', '>=', '>', '<=', '<', '!=']
 STATE_REGEXES = {
     'value_modification': f'%{EFFECT_RE}{CALCULATION_CLAUSE_RE}%',
-    'conditional_value_modification': f'%{CALCULATION_CLAUSE_RE}{COMPARATOR_RE}{CALCULATION_CLAUSE_RE}->{EFFECT_RE}{CALCULATION_CLAUSE_RE}%',
-    'state_modification': f' %{STATE_RE}:{EFFECT_RE}{CALCULATION_CLAUSE_RE}%',
-    'conditional_state_modification': f' %{CALCULATION_CLAUSE_RE}{COMPARATOR_RE}{CALCULATION_CLAUSE_RE}->{STATE_RE}:{EFFECT_RE}{CALCULATION_CLAUSE_RE}%',
+    'conditional_value_modification': f'%{CONDITION_RE}->{EFFECT_RE}{CALCULATION_CLAUSE_RE}%',
+    'state_modification': f' %{STATE_MOD_EFFECT_RE}%',
+    'conditional_state_modification': f' %{CONDITION_RE}->{STATE_MOD_EFFECT_RE}%',
+    'omni_state_modification': f' %({CONDITION_RE}->)?{STATE_MOD_EFFECT_RE}%',
+    'state_interpolation': f'%{STATE_RE}%',
+    'conditional_state_interpolation': f'%{CONDITION_RE}->{STATE_RE}%',
 }
 
 class StateClauseHandler():
@@ -134,19 +140,16 @@ class StateClauseHandler():
 
     def calculate_magnitude(self):
         value = clause_calculator.calculate(self.magnitude, self.state)
-        logging.debug(f'calculated magnitude value: {value}')
         self.magnitude = value
         return value
 
     def calculate_rhs(self):
         value = clause_calculator.calculate(self.rhs, self.state)
-        logging.debug(f'calculated rhs value: {value}')
         self.rhs = value
         return value
 
     def calculate_lhs(self):
         value = clause_calculator.calculate(self.lhs, self.state)
-        logging.debug(f'calculated lhs value: {value}')
         self.lhs = value
         return value
 
@@ -160,13 +163,35 @@ def evaluate_value_modification(condition, target, state):
     conditional_value_modification = re.fullmatch(STATE_REGEXES['conditional_value_modification'], condition)
 
     if value_modification:
-        logging.info('got value_modification')
+        # logging.info('got value_modification')
         return handler.process_value_modification(value_modification)
     elif conditional_value_modification:
-        logging.info('got conditional_value_modification')
+        # logging.info('got conditional_value_modification')
         return handler.process_conditional_value_modification(conditional_value_modification)
     else:
-        raise ValueError(f'condition {condition} passed to evaluate_value_modification was not of a value modification form!')
+        raise ValueError(f'condition "{condition}" passed to evaluate_value_modification was not of a value modification form!')
+
+# def handle_state_effects(to_replace, tag_loc, state):
+#     next_tag_loc = to_replace.find('$', tag_loc+1)
+#     if next_tag_loc == -1: # was !=
+#         next_tag_loc = len(to_replace)
+#     to_replace = to_replace[tag_loc+1:]
+#
+#     start = to_replace.find('%', tag_log+1, next_tag_loc)
+#     end = to_replace.find('%', start+1, next_tag_loc)
+#
+#     while start != -1:
+#         assert end != -1, f'Found starting % but didn\'t find matching one in line {line} while processing location {tag_loc}.'
+#         clause = to_replace[start:end+1]
+#
+#         if re.match(STATE_REGEXES['state_modification'], clause) or re.match(STATE_REGEXES['conditional_state_modification'], clause):
+#             evaluate_state_modification(clause, state)
+#         elif re.match(STATE_REGEXES['state_interpolation'], clause) or re.match(STATE_REGEXES['conditional_state_interpolation'], clause):
+#             replace_state_interpolation(to_replace, clause, state)
+#
+#     start = to_replace.find('%', end+1, next_tag_loc)
+#     end = to_replace.find('%', start+1, next_tag_loc)
+
 
 def evaluate_state_modification(condition, state):
     handler = StateClauseHandler()
@@ -177,15 +202,72 @@ def evaluate_state_modification(condition, state):
     conditional_state_modification = re.fullmatch(STATE_REGEXES['conditional_state_modification'], condition)
 
     if state_modification:
-        logging.info('got state_modification')
+        # logging.info('got state_modification')
         value = handler.process_state_modification(state_modification)
         return handler.target_state, value
     elif conditional_state_modification:
-        logging.info('got conditional_state_modification')
+        # logging.info('got conditional_state_modification')
         value = handler.process_conditional_state_modification(conditional_state_modification)
         return handler.target_state, value
     else:
-        raise ValueError(f'condition {condition} passed to evaluate_state_modification was not of a state modification form!')
+        raise ValueError(f'condition "{condition}" passed to evaluate_state_modification was not of a state modification form!')
+
+def clause_list_from_raw_clause(raw_clause):
+    return ['%' + clause + '%' for clause in raw_clause.split('|')]
+
+def replace_state_interpolation(to_replace, tag, state):
+    # logging.debug(f'beginning state interpolation over {to_replace}')
+    pattern = re.compile(STATE_REGEXES['state_interpolation'])
+    start = 0
+    if tag:
+        start = to_replace.find(tag.symbol)
+    # logging.debug(f'Starting from character {start}.')
+    # logging.debug(f'narrowed range to {to_replace[start:]}')
+    # next_tag_loc = to_replace.find('$', tag_loc+1)
+    # if next_tag_loc == -1: # was !=
+    #     next_tag_loc = len(to_replace)
+    # start, end = find_endpoints_for_interpolation(to_replace, tag)
+    # match = pattern.search(to_replace, start, end)
+    # start = to_replace.find('%', 0, next_tag_loc)
+    # end = to_replace.find('%', start+1, next_tag_loc)
+    # first_loop = True
+    while True:
+        # first_loop = False
+        match = choices_util.get_next_match(to_replace, pattern, start)
+        if match == None:
+            break
+        enclosing_braces = choices_util.get_enclosing_braces(match.start(), to_replace, '[', ']')
+        if enclosing_braces != (None, None):
+            start = match.end()
+            continue
+        logging.debug(f'match {match.group(0)} found, proceeding to interpolate {to_replace}')
+        clause = to_replace[match.start():match.end()]
+        state_name = clause[1:-1]
+        if state_name in state.keys():
+            state_value = state[state_name]
+            to_replace = to_replace.replace(clause, str(state_value))
+            to_replace, open, close = choices_util.handle_brace_enclosure(match.start(), to_replace, False)
+            if open != None and close != None:
+                start -= sum([brace < start for brace in [open, close]])
+        else:
+            to_replace, open, close = choices_util.handle_brace_enclosure(match.start(), to_replace, True)
+            if open != None and close != None:
+            # logging.debug(f'state missing for {state_name}, removing it')
+            # open, close = choices_util.get_enclosing_braces(match.start(), to_replace, '{', '}')
+            # if any([open, close]):
+            #     assert all([open, close]), f'Enclosing braces for clause {clause} in replacement string {to_replace} when processing tag {tag} were not both found. Returned locations were {open}, {close}.'
+            #     logging.debug(f'braces found, removing everything in {to_replace[open:close+1]}')
+            #     to_replace = to_replace[:open] + to_replace[close+1:]
+                # Back up however far the string has been modified before start.
+                start = choices_util.backup_for_deletion(start, open, close)
+            else:
+                logging.info(f'State {state_name} was unable to be interpolated, but no enclosing braces were found while processing {to_replace}. Removing just {to_replace[match.start():match.end()+1]}')
+                to_replace = to_replace[:match.start()] + to_replace[match.end()+1:]
+                # Back up however far the string has been modified before start.
+                start = choices_util.backup_for_deletion(start, match.start(), match.end())
+        # match = choices_util.get_next_match(to_replace, pattern, start)
+
+    return to_replace
 
 if __name__ == '__main__':
     set_up_logging.set_up_logging()

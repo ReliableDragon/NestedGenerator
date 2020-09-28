@@ -19,11 +19,15 @@ def main():
     logging_level = logging.WARNING
     parser = argparse.ArgumentParser(description='Nested Choice Driver.')
     parser.add_argument('--debug', action='store_true')
+    parser.add_argument('--street', action='store_true')
     args = parser.parse_args()
     if args.debug:
         logging_level = logging.DEBUG
     logging.basicConfig(level=logging_level)
 
+    if args.street:
+        print(load_and_gen('random_street')[0])
+        exit()
     repl()
 
 def repl():
@@ -54,11 +58,11 @@ def repl():
             elif command == 'ushop':
                 print(gen_unique_shop())
             elif command[:3] == 'gen':
-                print(load_and_gen(command[3:]))
+                print(load_and_gen(command[3:])[0])
             elif command == 'item':
-                print(load_and_gen('misc_items'))
+                print(load_and_gen('misc_items')[0])
             elif command == 'street':
-                print(load_and_gen('random_street'))
+                print(load_and_gen('random_street')[0])
             else:
                 found_command = False
 
@@ -86,7 +90,7 @@ def load_and_gen(filename, params={'num':1, 'uniqueness_level':0}):
     if '.' not in filename:
         filename = filename + '.txt'
     choices = NestedChoices.load_from_file(filename)
-    return choices.gen_choices(params=params)[0]
+    return choices.gen_choices(params=params)
 
 if __name__ == "__main__":
     main()

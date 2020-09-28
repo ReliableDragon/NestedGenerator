@@ -87,9 +87,8 @@ def calculate(clause, state):
 
     assert len(op_stack) == 0, f'Operand stack expected to contain no elements, but was {op_stack} after calculating {clause}!'
     assert len(val_stack) == 1, f'Value stack expected to contain one element, but was {val_stack} after calculating {clause}!'
-    logging.info(f'Calculated value of {val_stack[-1]} for clause {clause}.\n\n')
+    logging.debug(f'Calculated value of {val_stack[-1]} for clause {clause}.')
     return math.floor(val_stack.pop())
-
 
 if __name__ == '__main__':
     set_up_logging.set_up_logging()

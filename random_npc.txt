@@ -1,0 +1,29 @@
+random_npc
+name_syllables:name_syllables.txt
+
+1 $[1], a $[4] year(s) old $[3] $[2].\n'
+char += f'They are {relationship}, and ' + ('don\'t have' if children == 0 else f'have {children}') + ' children.\n'
+if job_override:
+    char += f'They run a {job_override}'
+else:
+    char += f'They are a {job}'
+char += f', and are {wealth}.\n'
+char += f'Their greatest desire in life is {desire}.\n'
+char += f'They are a level {level} {npc_class}.\n'
+  10 @name_syllables[2-4]{@2name_syllables}{@3name_syllables}{@4name_syllables}
+  $
+  100 human %age_pct:=100%
+  10 elf %age_pct:=1100%
+  10 dwarf %age_pct:=500%
+  20 half-elf %age_pct:=250%
+  5 gnome %age_pct:=600%
+  5 halfling age_pct:=350%
+  4 half-orc %age_pct:=75%
+  1 orc %age_pct:=25%
+  1 goblin %age_pct:=50%
+  $
+  1 male
+  1 female
+  $
+  1 [5,8G]%*=age_pct/100% %age:=
+  $

@@ -1,48 +1,48 @@
 generic_shops
 
-10 alchemist
+10%+=wealth% alchemist %wealth:+=5%
 
 25 apothecary
 
 50 bakery
 
-75 bar
+75%-=wealth% bar %wealth:-=5%
 
 25 basketmaker
 
 30 blacksmith
 
-10 bookseller
+10%+=2*wealth% bookseller %wealth:+=5%
 
-25 bureaucratic building
+25%+=wealth% bureaucratic building %wealth:+=5%
 
 20 butcher
 
-100 cafe
+100%+=wealth% cafe %wealth:+=5%
 
-30 candlemaker
+30 candlemaker %wealth:+=1%
 
 40 carpenter
 
-10 clockmaker
+10%+=wealth% clockmaker %wealth:+=3%
 
 55 clothier
 
 30 construction site
 
-40 flower shop
+40%+=wealth% flower shop %wealth:+=2%
 
-50 garden
+25%+=wealth*4% garden %wealth:+=1%
 
 20 general store
 
 10 glassblower
 
-5 goldsmith
+0%=wealth% goldsmith %wealth:+=10%
 
 5 graveyard
 
-75 grocer
+75%+=spoop% grocer
 
 50 guard post
 
@@ -56,21 +56,21 @@ generic_shops
 
 20 inn
 
-5 jail
+5%-=2*wealth% jail %wealth:-=5%
 
 15 leatherworker
 
-5 magic shop
+5%+=spoop% magic shop
 
-10 mansion
+2%+=wealth*5% mansion
 
 25 mason
 
 15 painter’s studio
 
-50 park
+50%+=wealth% park %wealth:+=3%
 
-50 pawn shop
+50%-=wealth% pawn shop %wealth:-=3%
 
 35 potter
 
@@ -78,22 +78,22 @@ generic_shops
 
 55 seamstress
 
-30 scribe
+30%+=wealth% scribe %wealth:+=5%
 
-20 sculptor
+20%+=wealth*2% sculptor %wealth:+=10%
 
 30 shoemaker
 
-30 silversmith
+30%+=wealth*3% silversmith %wealth:+=3%
 
-5 stocks
+5%-=wealth% stocks %wealth:-=5%
 
 10 temple
 
 30 warehouse
 
-40 washerwoman’s
+40%-=3*wealth% washerwoman’s %wealth:-=5%
 
-30 watchmaker
+30%+=2*wealth% watchmaker %wealth:+=5%
 
 40 weaver

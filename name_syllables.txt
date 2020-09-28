@@ -1,0 +1,55 @@
+name_syllables
+
+1 al
+
+1 ben
+
+1 cor
+
+1 dan
+
+1 fan
+
+1 fer
+
+1 frey
+
+1 gra
+
+1 gar
+
+1 ger
+
+1 hin
+
+1 har
+
+1 par
+
+1 pen
+
+1 pul
+
+1 ser
+
+1 star
+
+1 ston
+
+1 nikov
+
+1 wray
+
+1 chill
+
+1 chan
+
+1 lon
+
+1 and
+
+1 drak
+
+1 crat
+
+1 yon

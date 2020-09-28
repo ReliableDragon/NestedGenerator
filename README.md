@@ -120,7 +120,11 @@ Choices can write and read state. This can allow you to make choices more consis
 ### Writing State
 State can be written by writing '$statename:$value_modification', inside of a pair of '%'. State names are of the form '[a-zA-Z]\w+, allowed
 operations are '+=', '-=', '*=', '/=', '^=', and '=', and allowed value modifications are integers or other states. The exact format is
-'%[a-zA-Z]\w+:[+=-/\*]"?[\w ]+"?%'. State writing operations must be precede the first '%' a space. All states default to the value 0.
+'%[a-zA-Z]\w+:[+=-/\*]"?[\w ]+"?%'.
+* State writing operations must occur at the end of a line.
+* The first '%' must be preceded by a space.
+* Multiple state writing operations on one line are allowed.
+* All states default to the value 0.
 
 For example, a choice that writes '50' to the state 'wealth' would be:
 ```

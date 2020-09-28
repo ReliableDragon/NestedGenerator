@@ -2,25 +2,31 @@ test_places
 
 1 $, iowa
   500 $[2], Cedar Rapids$[1]
-    1 , the city of five seasons %"a"=="a"->smell:+50%
-    10 , the city of five smells %5>4->smell:+100%
+    1 , the city of five seasons %"a"=="a"->smell:+=50%
+    10 , the city of five smells %5>4->smell:+=100%
     $
     50 New Bo
     30 Collins Road
     10 Cedar Valley Nature Trail
-    1%smell>50->+1000% Quaker Oats [10-10]%*smell%
-  3 Iowa City
+    1%smell>50->+=10000% Quaker Oats [10-10]%*=smell%
+  3 $ Iowa City$
+    1 University of Iowa
+    1 Trader Joe's
+    $
+    1
+    1 , USA
   1 Des Moines
 
 100 $, washington
-  1 $, Seattle [1-5]%wildfires=="hella"->*100%
-    1 $, Capitol Hill [10-3N]
+  1 $, Seattle [1-5]%wildfires=="hella"->*=100%
+    1 $, Capitol Hill [10-3N%capvalue%]
       1
     1 {Country 1: @countries_table[2,-1]}{ Country 2: @2countries_table}{ Country 3: @3countries_table}
 
-1000 San Francisco, $$
-  1 California, $ %wildfires:="hella"%
+10000 San Francisco[1-10], $$
+  100 California [1-5%nthcali%], $ %wildfires:="hella"%
     1 USA
+  1 NorCal %wildfires:="also bad"%
   $
-  1
-  1 , The World
+  10 , The World{ (Home of the %nthcali% $!}
+    10 San Diego!

@@ -1,7 +1,7 @@
 character_interactions
 misc_items:misc_items.txt
 
-3 challenge them to drinking contest
+3%-=wealth% challenge them to drinking contest
 
 1  challenge them to a race
 
@@ -9,13 +9,13 @@ misc_items:misc_items.txt
 
 3 compliment them
 
-10 stare at them
+10%-=2*wealth% stare at them %wealth:-=3%
 
 10 try to sell them @misc_items
 
 3 ask them for directions
 
-5 try to pick their pockets (dc 10 perception)
+10%+=5*wealth% try to pick their pockets (dc 10 perception)
 
 10 pointedly ignore them
 
@@ -31,27 +31,27 @@ misc_items:misc_items.txt
     10 poetry
   1 if the captain of the guard is really a level 20 paladin
 
-1 require them to pay a toll
+1%-=5*wealth% require them to pay a toll %wealth:-=10%
 
 10 invite them into their shop
 
 7 ask them for news
 
-7 ask them for spare change
+7%-=wealth% ask them for spare change %wealth:-=3%
 
-2 hide from them, because they are $
+1%-=3*wealth% hide from them, because they are $
   5 doing crime.
   3 scared of martial folks.
   5 a kid, awed at seeing real adventurers.
   1 expecting bloodshed, and trying to leave quickly.
   1 playing hide and seek.
 
-10 wave at them
+10%+=wealth% wave at them %wealth:+=3%
 
-10 smile and nod
+10%+=wealth% smile and nod %wealth:+=3%
 
 5 gossip about them with their companions
 
-3 curse at them
+3%-=2*wealth% curse at them %wealth:-=3%
 
-10 avoid eye contact
+10%-=wealth/2% avoid eye contact %wealth:-=1%

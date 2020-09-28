@@ -6,18 +6,23 @@ import logging
 import argparse
 
 import state_clause_handler
+import choices_util
 import choice_generator as choice_generator_mod
 
 class WeightedChoice():
-    def __init__(self, weight, choice, tag=1, clause=None):
+    def __init__(self, weight, choice, tag_num=1, clause_list=None):
         self.weight = int(weight)
         self.choice = choice
-        self.tag = tag
-        self.clause = clause
+        self.tag_num = tag_num
+        self.clause_list = clause_list
         self.uuid = uuid.uuid4()
 
     def __str__(self):
-        return f'({self.weight})[{self.tag}]{{{self.clause}}} "{self.choice}"'
+        str_rep = f'({self.weight})[{self.tag_num}]'
+        if self.clause_list:
+            str_rep += f'{{{self.clause_list}}}'
+        str_rep += f'{self.choice}'
+        return str_rep
 
     def __repr__(self):
         return self.__str__()
@@ -33,7 +38,7 @@ class NestedChoices():
     def __str__(self):
         val = '{\n'
         indent = 2
-        val += recursive_dict_print(self.choices, indent)
+        val += choices_util.recursive_dict_print(self.choices, indent)
         val += '}'
 
         return val
@@ -81,21 +86,17 @@ class NestedChoices():
         for top_level_choice_data in top_level_choices_list:
             indent = 0
             parent_choicedict_stack = [choices_tree]
+            tag_stack = [1]
 
-            nested_choices = split_into_lines(top_level_choice_data)
+            nested_choices = choices_util.split_into_lines(top_level_choice_data)
             top_level_choice = nested_choices.pop(0)
 
-            try:
-                parent = WeightedChoice(*top_level_choice.split(' ', 1))
-            except TypeError:
-                # Empty choice.
-                parent = WeightedChoice(top_level_choice, '')
+            parent = load_choice_from_line(top_level_choice, tag_stack)
 
             choices_tree[parent] = {}
             current_dict = choices_tree[parent]
             # Holds the value to go back to if the next node turns out to be a leaf.
             prev_dict = choices_tree
-            tag_stack = [1]
 
             for choice in nested_choices:
                 # Check how many spaces there are to find the indent level.
@@ -124,26 +125,7 @@ class NestedChoices():
                     continue
 
                 choice = choice[new_indent:]
-                try:
-                    logging.info(f'choice: {choice}')
-                    weighted_choice = WeightedChoice(*choice.split(' ', 1), tag=tag_stack[-1])
-                except ValueError as e:
-                    if 'invalid literal for int() with base 10:' not in str(e):
-                        raise
-                    try:
-                        weight, clause, choice_text = choice.split('%', 2)
-                    except ValueError as e:
-                        logging.error(f'Despite not having a space, {choice} doesn\'t appear to have had a state clause. That\'s is weird. I\'m also not sure how it got past the format checking.')
-                        raise
-                    logging.info(f'weight: {weight}, clause: {clause}, choice: "{choice_text}"')
-                    # Choice must have a leading space now, if the format is being followed properly.
-                    assert choice_text[0] == ' ', f'Choice {choice} seems not to have had a space following the state clause affecting the probability. This is against the format.'
-                    choice_text = choice_text[1:]
-                    clause = '%' + clause + '%'
-                    weighted_choice = WeightedChoice(weight, choice_text, tag=tag_stack[-1], clause=clause)
-                except TypeError:
-                    # Empty choice.
-                    weighted_choice = WeightedChoice(choice, '', tag_stack[-1])
+                weighted_choice = load_choice_from_line(choice, tag_stack)
 
                 current_dict[weighted_choice] = {}
                 current_dict = current_dict[weighted_choice]
@@ -196,9 +178,9 @@ class NestedChoices():
 
         for i in range(params['num']):
             # generated = False
-            generated_choice = '$'
-            dict_and_choice_backtrace = []
-            level = 1
+            # generated_choice = '$'
+            # dict_and_choice_backtrace = []
+            # level = 1
             choices_dict = self.choices
 
             generated_choice, state = choice_generator.gen_choice(choices_dict, params)
@@ -209,17 +191,34 @@ class NestedChoices():
     def call_subtable(self, subtable_id, params):
         return self.subtables[subtable_id]._gen_choices(params)
 
+
+def load_choice_from_line(line, tag_stack):
+    try:
+        weighted_choice = WeightedChoice(*line.split(' ', 1), tag_num=tag_stack[-1])
+    except ValueError as e:
+        if 'invalid literal for int() with base 10:' not in str(e):
+            raise
+        try:
+            weight, raw_clause, choice_text = line.split('%', 2)
+        except ValueError as e:
+            logging.error(f'Despite not having a space, {line} doesn\'t appear to have had a state clause. That\'s is weird. I\'m also not sure how it got past the format checking.')
+            raise
+        logging.info(f'weight: {weight}, clause: {raw_clause}, choice_text: "{choice_text}"')
+        # Choice must have a leading space now, if the format is being followed properly.
+        assert choice_text[0] == ' ', f'Choice {line} seems not to have had a space following the state clause affecting the probability. This is against the format.'
+        choice_text = choice_text[1:]
+        # clause_list = ['%' + clause + '%' for clause in raw_clause]
+        clause_list = state_clause_handler.clause_list_from_raw_clause(raw_clause)
+        # clause = '%' + clause + '%'
+        weighted_choice = WeightedChoice(weight, choice_text, tag_num=tag_stack[-1], clause_list=clause_list)
+    except TypeError:
+        # Empty choice.
+        weighted_choice = WeightedChoice(line, '', tag_stack[-1])
+
+    return weighted_choice
+
 def is_tag_marker(choice):
     return re.match('(  )+\$', choice)
-
-def recursive_dict_print(dict, indent=0):
-    val = ''
-    indent_str = ' ' * indent
-    for k, v in dict.items():
-        val += indent_str + str(k) + ': {\n'
-        val += recursive_dict_print(v, indent + 2)
-        val += indent_str + '}\n'
-    return val
 
 def validate_choices(namespace_id, choices_string):
     assert len(choices_string) != 0, 'Got empty choices data!'
@@ -257,22 +256,26 @@ def validate_choices(namespace_id, choices_string):
         value_start = line.find('%')
         value_stop = line.find('%', value_start + 1)
         state_start = line.find(' %', value_start-1, value_start+1)
+        clause = line[value_start:value_stop+1]
         while value_start != -1:
-            if state_start != -1:
-                state_clause = line[state_start:value_stop+1]
-                assert(any(map(lambda pattern: re.fullmatch(pattern, state_clause), state_patterns))), f'State modification clause "{state_clause}" in line "{line}" has a format that does not match any valid format for state clauses!'
+            if all(choices_util.get_enclosing_braces(value_start, line, lbrace='[', rbrace=']')):
+                # This is a random number storage state
+                pass
+            elif re.fullmatch(' ?%' + state_clause_handler.STATE_RE + '%', clause):
+                # This is a standalone state. Skip the potential space.
+                pass
+            elif state_start != -1:
+                clause = line[state_start:value_stop+1]
+                assert(any(map(lambda pattern: re.fullmatch(pattern, clause), state_patterns))), f'State modification clause "{clause}" in line "{line}" has a format that does not match any valid format for state clauses!'
             else:
-                state_clause = line[value_start:value_stop+1]
-                assert(any(map(lambda pattern: re.fullmatch(pattern, state_clause), value_patterns))), f'Value modification clause "{state_clause}" in line "{line}" has a format that does not match any valid format for state clauses!'
+                assert(any(map(lambda pattern: re.fullmatch(pattern, clause), value_patterns))), f'Value modification clause "{clause}" in line "{line}" has a format that does not match any valid format for state clauses!'
 
             value_start = line.find('%', value_stop + 1)
             value_stop = line.find('%', value_start + 1)
             state_start = line.find(' %', value_start-1, value_start+1)
+            clause = line[value_start:value_stop+1]
 
         prev_indent = indent
-
-def split_into_lines(s):
-    return re.split('\r?\n', s)
 
 if __name__ == "__main__":
     logging_level = logging.WARNING
