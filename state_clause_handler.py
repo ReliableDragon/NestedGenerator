@@ -2,32 +2,35 @@ import logging
 import math
 import re
 
+import clause_calculator
+import set_up_logging
+
+from collections import defaultdict
+
+CALCULATION_CLAUSE_RE = '([\^\-\+/\*\(\)0-9\w]+|"[\w ]+")'
+COMPARATOR_RE = '([=<>!]{1,2})'
+STATE_RE = '([a-zA-Z]\w+)'
+EFFECT_RE = '([\^\-\+/\*]=|=)'
+
 VALID_COMPARISONS = ['==', '>=', '>', '<=', '<', '!=']
 STATE_REGEXES = {
-    'value_modification': '%([-+=\/*])(\w+)%',
-    'conditional_value_modification': '%("?[\w ]+"?)([=<>!]+)("?[\w]+"?)->([-+=\/*])(\w+)%',
-    'state_modification': ' %([a-zA-Z]\w*):([+=\-/*])("?[\w ]+"?)%',
-    'conditional_state_modification': ' %("?[\w ]+"?)([=<>!]+)("?[\w ]+"?)->([a-zA-Z]\w*):([+=\-/*])("?\w*"?)%',
+    'value_modification': f'%{EFFECT_RE}{CALCULATION_CLAUSE_RE}%',
+    'conditional_value_modification': f'%{CALCULATION_CLAUSE_RE}{COMPARATOR_RE}{CALCULATION_CLAUSE_RE}->{EFFECT_RE}{CALCULATION_CLAUSE_RE}%',
+    'state_modification': f' %{STATE_RE}:{EFFECT_RE}{CALCULATION_CLAUSE_RE}%',
+    'conditional_state_modification': f' %{CALCULATION_CLAUSE_RE}{COMPARATOR_RE}{CALCULATION_CLAUSE_RE}->{STATE_RE}:{EFFECT_RE}{CALCULATION_CLAUSE_RE}%',
 }
-
 
 class StateClauseHandler():
 
     def __init__(self):
         self.condition = None
         self.lhs = None
-        self.lhs_is_string_literal = None
-        self.lhs_is_state = None
         self.comparator = None
         self.rhs = None
-        self.rhs_is_string_literal = None
-        self.rhs_is_state = None
         self.target_state = None
         self.target =  None
         self.effect = None
         self.magnitude = None
-        self.magnitude_is_string_literal = None
-        self.magnitude_is_state = None
         self.type = None
         self.is_condition_valid = False
 
@@ -40,9 +43,9 @@ class StateClauseHandler():
         self.effect = match.group(4)
         self.magnitude = match.group(5)
 
-        self.set_up_lhs()
-        self.set_up_rhs()
-        self.set_up_magnitude()
+        self.calculate_lhs()
+        self.calculate_rhs()
+        self.calculate_magnitude()
 
         logging.info('doing comparison')
         if self.do_comparison():
@@ -56,7 +59,7 @@ class StateClauseHandler():
         self.magnitude = match.group(2)
         self.is_condition_valid = True
 
-        self.set_up_magnitude()
+        self.calculate_magnitude()
 
         return self.calculate_modification()
 
@@ -70,9 +73,9 @@ class StateClauseHandler():
         self.effect = match.group(5)
         self.magnitude = match.group(6)
 
-        self.set_up_lhs()
-        self.set_up_rhs()
-        self.set_up_magnitude()
+        self.calculate_lhs()
+        self.calculate_rhs()
+        self.calculate_magnitude()
 
         if self.do_comparison():
             return self.calculate_modification()
@@ -87,7 +90,7 @@ class StateClauseHandler():
         self.magnitude = match.group(3)
         self.is_condition_valid = True
 
-        self.set_up_magnitude()
+        self.calculate_magnitude()
 
         return self.calculate_modification()
 
@@ -114,53 +117,38 @@ class StateClauseHandler():
 
     def calculate_modification(self):
         value = None
-        if self.effect == '*':
+        if self.effect == '*=':
             value = self.target * self.magnitude
-        elif self.effect == '+':
+        elif self.effect == '+=':
             value = self.target + self.magnitude
-        elif self.effect == '*':
-            value = self.target * self.magnitude
-        elif self.effect == '/':
+        elif self.effect == '-=':
+            value = self.target - self.magnitude
+        elif self.effect == '/=':
             value = self.target / self.magnitude
+        elif self.effect == '^=':
+            value = self.target ** self.magnitude
         elif self.effect == '=':
             value = self.magnitude
 
         return value
 
-    def set_up_magnitude(self):
-        if self.magnitude[0] == '"':
-            assert self.magnitude[-1] == '"', f'condition {self.condition} had mis-matched quotes on the magnitude.'
-            self.magnitude_is_string_literal = True
-        else:
-            try:
-                self.magnitude = int(self.magnitude)
-            except ValueError:
-                self.magnitude_is_state = True
-                self.magnitude = self.state[self.magnitude]
+    def calculate_magnitude(self):
+        value = clause_calculator.calculate(self.magnitude, self.state)
+        logging.debug(f'calculated magnitude value: {value}')
+        self.magnitude = value
+        return value
 
-    def set_up_rhs(self):
-        logging.info(f'rhs={self.rhs}')
-        if self.rhs[0] == '"':
-            assert self.rhs[-1] == '"', f'condition {condition} had mis-matched quotes on the rhs.'
-            self.rhs_is_string_literal = True
-        else:
-            try:
-                self.rhs = int(self.rhs)
-            except ValueError:
-                self.rhs_is_state = True
-                self.rhs = self.state[self.rhs]
+    def calculate_rhs(self):
+        value = clause_calculator.calculate(self.rhs, self.state)
+        logging.debug(f'calculated rhs value: {value}')
+        self.rhs = value
+        return value
 
-    def set_up_lhs(self):
-        logging.info(f'lhs={self.lhs}')
-        if self.lhs[0] == '"':
-            assert self.lhs[-1] == '"', f'condition {condition} had mis-matched quotes on the lhs.'
-            self.lhs_is_string_literal = True
-        else:
-            try:
-                self.lhs = int(self.lhs)
-            except ValueError:
-                self.lhs_is_state = True
-                self.lhs = self.state[self.lhs]
+    def calculate_lhs(self):
+        value = clause_calculator.calculate(self.lhs, self.state)
+        logging.debug(f'calculated lhs value: {value}')
+        self.lhs = value
+        return value
 
 def evaluate_value_modification(condition, target, state):
     handler = StateClauseHandler()
@@ -198,3 +186,15 @@ def evaluate_state_modification(condition, state):
         return handler.target_state, value
     else:
         raise ValueError(f'condition {condition} passed to evaluate_state_modification was not of a state modification form!')
+
+if __name__ == '__main__':
+    set_up_logging.set_up_logging()
+
+    for type, regex in STATE_REGEXES.items():
+        logging.debug(f'{type} regex: {regex}')
+
+    state = defaultdict(int, {'wealth': 10, 'money': 256, 'dogs': 1, 'cats': 3, 'fish': 12, 'name': 'Gabe'})
+    print(evaluate_value_modification('%(10+wealth)*3>money-200->=dogs*(cats+fish)%', 100, state)) # 15
+    print(evaluate_state_modification(' %(wealth+wealth/2*4)^2/2>money->cash:-=dogs*(cats+fish)%', state)) # -15
+    print(evaluate_state_modification(' %(wealth+wealth/2*4)^2/2>-dogs->money:+=money-(dogs*252)%', state)) # 260
+    print(evaluate_state_modification(' %name>"aaa"->whoami:=name%', state)) # 260
