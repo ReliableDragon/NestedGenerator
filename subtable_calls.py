@@ -51,7 +51,7 @@ def make_subtable_calls(parent, choice_to_expand, tag, state):
     return choice_to_expand, state
 
 def replace_repeated_subtable_clauses(choice_to_expand, subtable_choices, subtable_id):
-    logging.debug(f'subtable generated values: {subtable_choices}')
+    # logging.debug(f'subtable generated values: {subtable_choices}')
     # Matches using results beyond the first are of the form '@\dsubtable_id'.
     i = 2
     for choice in subtable_choices[1:]:
@@ -59,7 +59,7 @@ def replace_repeated_subtable_clauses(choice_to_expand, subtable_choices, subtab
         # one value above.
         numbered_id = '@' + str(i) + subtable_id
         id_index = choice_to_expand.index(numbered_id)
-        logging.debug(f'subtable numbered_id: {numbered_id}')
+        # logging.debug(f'subtable numbered_id: {numbered_id}')
         choice_to_expand, _, _ = choices_util.handle_brace_enclosure(id_index, choice_to_expand, delete_all=False)
         # choice_to_expand = process_brace_clause(choice_to_expand, numbered_id, delete=False)
         choice_to_expand = choice_to_expand.replace(numbered_id, choice, 1)
@@ -68,7 +68,7 @@ def replace_repeated_subtable_clauses(choice_to_expand, subtable_choices, subtab
     numbered_id = '@' + str(i) + subtable_id
     while numbered_id in choice_to_expand:
         id_index = choice_to_expand.index(numbered_id)
-        logging.debug(f'Removing subtable clause, numbered_id: {numbered_id}')
+        # logging.debug(f'Removing subtable clause, numbered_id: {numbered_id}')
         choice_to_expand, _, _ = choices_util.handle_brace_enclosure(id_index, choice_to_expand, delete_all=True)
         # choice_to_expand = process_brace_clause(choice_to_expand, numbered_id, delete=True)
         i += 1
@@ -79,3 +79,4 @@ def merge_state(state, new_state):
     for key, value in new_state.items():
         # logging.info(f'Writing to state: {key}, {value}.')
         state[key] = value
+    return state

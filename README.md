@@ -65,19 +65,26 @@ parameters before rounding down to the nearest integer.
 
 If G is supplied, it is much like N, except that the first and second numbers correspond to the alpha and beta parameters of the gamma distribution instead.
 
+It's possible to store the result of the random number generation into a state, by appending %STATE_NAME% just before the closing bracket, like so:
+```
+[1-10G%random_number%]
+```
+For more on state, see below.
+
 ## Randomly Repeated Sub-namespace Calls (RRSNC)
 It's also possible to randomly choose how many calls to make to a specified sub-namespace. The format for that is '\[\d+-\d+,\d+\]', which is alsmost the same
 as the standard call, with the exception that the first parameter is now a range. That range will be sampled over uniformly, as with the non-NG RNG above.
 
 For example, '@house_colors[3-5,-1]' would generate between 3 and 5 random house colors, and ensure that each value was unique.
 
-## Sub-namespace Clauses
-If you want to use RRSNC, you need a way to remove any text in a choice that may have been associated with a sub-namespace call that was not made. To do this,
-surround any sub-namespace calls that you are not sure will be made with curly brackets. ('{' and '}') If the call is not made, everything between the brackets
-will be removed. If the call is made, only the brackets themselves will be removed.
+## Bracket Clauses
+When writing a choice where an element may not be present (such as when randomly repeating a sub-namespace call above), you need a way to remove any text in a choice that may have been associated with the element that was not present. To do this, surround the conditional item that you
+are not sure will be present with curly brackets. ('{' and '}') If the item is not present, everything between the brackets
+will be removed. If it is present, only the brackets themselves will be removed.
 
-For example, if a call to 'First color: @house_colors[1-2,-1].{ Second color: @2house_colors.}' only retrieved one house color value, the result might be,
-'First color: Green.' If it retrieved both, the result might be, 'First color: Red. Second color: Purple.'
+For example, if a call to 'First color: @house_colors[1-2,-1].{ Second color: @2house_colors.}' only retrieved one house color value, the result might be, 'First color: Green.' If it retrieved both, the result might be, 'First color: Red. Second color: Purple.'
+
+Bracket clauses are supported for RRSNC, and state interpolations (see below).
 
 ## Multiple Replacement Tokens in a Choice
 It is possible to have multiple replacement tokens ('$') in a single choice. The choices for the first token must be separated from the choices for the
@@ -176,12 +183,25 @@ the value in the magic_items state is greater than 100 times the nobility level:
 ```
 
 ### Using Strings in State
-Strings are allowed in states, but are much more limited than numerical values. They can be stored into states, read from them, and compared for
-equality/inequality. Other operations may work, but are not supported. They cannot be used to modify any values in choices, and are mostly just
-provided to allow an easier way to indicate categorical data than using integers and remembering what they correspond to.
+Strings are allowed in states, but support fewer operations. They can be stored into states, read from them, and compared for
+equality/inequality. Other operations may work, but are not supported.
 
 For example, you could set the 'nobility' state to 'baron', and check against it later on, but there is no ability to see if a string is in a list,
-or to insert it into a choice.
+check if it's a substring of another string, or anything like that.
+
+### Interpolation
+State values can be inserted into a choice by putting the state name, surrounded by percent signs, such as '%my_state%'. The state will then be
+replaced by whatever value is in that state when that clause is evaluated. (For more on evaluation order, see below.) If the state is not present
+when evaluated, the interpolation test will be removed. If there is any choice text associated with the interpolation, you can surround it in a
+bracket clause, as detailed above.
+
+### Execution Order
+Execution occurs from left to right, evaluating each substitution token, subtable call, and random number generation as it is found,
+before proceeding on.
+
+If the order of substitution tokens is overridden, each token "owns" the text between itself and the next token,
+and that owned text will be evaluated left-to-right for subtable calls and RNG before proceeding on to the next token.
+The text before any tokens will be evaluated first, as if there was a virtual "0th token" at the start of the choice.
 
 ## Examples
 An example file, demonstrating many of these features, is present in test_places.txt. (Note that this test file also tests some code functions, specifically

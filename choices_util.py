@@ -3,7 +3,7 @@ import re
 import set_up_logging
 
 def get_enclosing_braces(position, line, lbrace='{', rbrace='}'):
-    logging.debug(f'Checking if position {position}, at the center of "{line[position-3:position+4]}" in line "{line}" is contained in braces.')
+    # logging.debug(f'Checking if position {position}, at the center of "{line[position-3:position+4]}" in line "{line}" is contained in braces.')
     lloc = None
     rloc = None
     i = position
@@ -30,7 +30,7 @@ def get_enclosing_braces(position, line, lbrace='{', rbrace='}'):
             lbrace_count += 1
         i += 1
 
-    logging.debug(f'lloc: {lloc}, rloc: {rloc}')
+    # logging.debug(f'lloc: {lloc}, rloc: {rloc}')
     return lloc, rloc
 
 def split_into_lines(s):
@@ -71,13 +71,9 @@ def find_endpoint_for_interpolation(to_replace, start):
 
 def get_next_match(to_replace, pattern, start):
     end = find_endpoint_for_interpolation(to_replace, start)
-    logging.debug(f'Getting next match for {pattern} in range {to_replace[start:end]}')
+    # logging.debug(f'Getting next match for {pattern} in range {to_replace[start:end]}')
     match = pattern.search(to_replace, start, end)
-    logging.debug(f'Found match {match}.')
-    # while match:
-    #     start = match.end()
-    #     match = pattern.search(to_replace, start, end)
-    #     logging.debug(f'Found match {match}.')
+    # logging.debug(f'Found match {match}.')
     return match
 
 if __name__ == '__main__':

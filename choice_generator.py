@@ -106,24 +106,11 @@ class ChoiceGenerator():
             # logging.debug(f'Doing replacements for tag {tag.symbol} on {choice_to_expand}"')
             choice_to_expand = self.make_replacements(choice_to_expand, tag)
 
-            # Symbols of the form $[N] allow manual overriding of the recursion ordering.
-            # This makes it possible to choose a state-determining value before making
-            # a choice that requires that state.
-            # manual_ordering_override = '$[' + str(tag) + ']'
-            # if choice_to_expand.find(manual_ordering_override) != -1:
-            # logging.debug(f'choice_to_expand, pre-tag replacement, level {self.level}: {choice_to_expand}')
-            # logging.debug(f'Replacing tag {tag.symbol} on {choice_to_expand}"')
             choice_to_expand = choice_to_expand.replace(tag.symbol, recursed_choice, 1)
-            # else:
-                # choice_to_expand = choice_to_expand.replace('$', recursed_choice, 1)
 
             # logging.debug(f'choice_to_expand, level {self.level}: {choice_to_expand}\n\n')
 
-        # choice_to_expand = self.make_replacements(choice_to_expand, tag)
-        # logging.debug(f'replaced choice_to_expand, level {self.level}: {choice_to_expand}')
         choice_to_expand = self.extract_state(choice_to_expand)
-        # logging.debug(f'State: {self.state}')
-        # logging.info(f'used_choices: {self.used_choices}')
         return choice_to_expand
 
     def filter_choices_dict(self, tag_num, choices_dict):
@@ -133,13 +120,8 @@ class ChoiceGenerator():
                 continue
             if choice in self.used_choices:
                 continue
-            if not self.passes_state_check(choice):
-                continue
             filtered_choices.append(choice)
         return filtered_choices
-
-    def passes_state_check(self, choice):
-        return True
 
     # generated_choice: A choice generated during the recursion process which
     # is fully generated. (i.e. has no more '$' in it.)
@@ -149,17 +131,14 @@ class ChoiceGenerator():
         while match:
             clause = generated_choice[match.start():match.end()]
             state, value = state_clause_handler.evaluate_state_modification(clause, self.state)
+            if isinstance(value, str):
+                value = value.strip('"')
             self.state[state] = value
 
             generated_choice = generated_choice[:match.start()] + generated_choice[match.end():]
 
             match = state_pattern.search(generated_choice)
         return generated_choice
-    #
-    # def merge_state(self, state):
-    #     for key, value in state.items():
-    #         # logging.info(f'Writing to state: {key}, {value}.')
-    #         self.state[key] = value
 
     # This one's a bit tricky. We take a backtrace object which contains a trail of WCs
     # that we may have to remove, and the dictionaries that they occur in. Starting from the
@@ -188,104 +167,13 @@ class ChoiceGenerator():
     def make_replacements(self, choice_to_expand, tag):
         logging.debug(f'Making replacements on {choice_to_expand} for tag {tag}.')
         choice_to_expand, state = range_replacements.replace_ranges(choice_to_expand, tag, self.state)
+        self.state = state
         choice_to_expand = state_clause_handler.replace_state_interpolation(choice_to_expand, None, self.state)
         choice_to_expand, state = subtable_calls.make_subtable_calls(self.parent, choice_to_expand, tag, self.state)
-        # choice_to_expand = self.make_subtable_calls(choice_to_expand, tag)
+        self.state = state
         logging.debug(f'Finished making replacements: {choice_to_expand} for tag {tag}.')
 
         return choice_to_expand
-
-    # def replace_ranges(self, choice_to_expand, tag):
-    #     logging.debug(f'Replacing ranges on {choice_to_expand} for tag {tag}.')
-    #     num_replace = re.compile('\[(\d+)-(\d+)(G|N)?(%[a-zA-Z]\w+%)?\]')
-    #     start = 0
-    #     if tag:
-    #         start = choice_to_expand.find(tag.symbol)
-    #     match = choices_util.get_next_match(choice_to_expand, num_replace, start)
-    #     # match = num_replace.search(choice_to_expand)
-    #     logging.debug(f'Got match {match}, with updated start {start}.')
-    #     while match:
-    #         logging.debug(f'Replacing range {match.group(0)}')
-    #         full_match = match.group(0)
-    #         start = int(match.group(1))
-    #         end = int(match.group(2))
-    #         type = match.group(3)
-    #         to_store = match.group(4)
-    #
-    #         val = None
-    #         if type == 'N':
-    #             # start = mean, end = stddev
-    #             val = math.floor(random.gauss(start, end))
-    #         elif type == 'G':
-    #             #start = alpha, end = beta
-    #             val = math.floor(random.gammavariate(start, end))
-    #         else:
-    #             val = random.randint(start, end)
-    #
-    #         logging.debug(f'Found range {full_match} for choice_to_expand {choice_to_expand}.')
-    #         if match.end() < len(choice_to_expand) and choice_to_expand[match.end()] == '%':
-    #             state_clause_start = match.end()
-    #             state_clause_end = choice_to_expand.find('%', state_clause_start+1)
-    #             raw_clause = choice_to_expand[state_clause_start+1:state_clause_end]
-    #             for clause in state_clause_handler.clause_list_from_raw_clause(raw_clause):
-    #                 logging.debug(f'Doing state calculation for clause {clause} in raw_clause {raw_clause}, with target {full_match}.')
-    #                 val = state_clause_handler.evaluate_value_modification(clause, val, self.state)
-    #             choice_to_expand = choice_to_expand[:state_clause_start] + choice_to_expand[state_clause_end+1:]
-    #
-    #         self.state[to_store] = val
-    #
-    #         choice_to_expand = choice_to_expand.replace(full_match, str(val))
-    #         # match = num_replace.search(choice_to_expand)
-    #         match = choices_util.get_next_match(choice_to_expand, num_replace, start)
-    #     logging.debug(f'Finished replacing ranges on {choice_to_expand} for tag {tag}.')
-    #     return choice_to_expand
-    #
-    # def make_subtable_calls(self, choice_to_expand, tag):
-    #     subtable_replace = re.compile('@([a-zA-Z_]+)(\[(\d+)(-\d+)?, ?(-?\d+)\])?')
-    #     start = 0
-    #     if tag:
-    #         start = choice_to_expand.find(tag.symbol)
-    #     match = choices_util.get_next_match(choice_to_expand, subtable_replace, start)
-    #     match = subtable_replace.search(choice_to_expand)
-    #     while match:
-    #         full_match = match.group(0)
-    #         subtable_id = match.group(1)
-    #         base_num_to_gen = match.group(3)
-    #         end_num_to_gen = match.group(4)
-    #         uniqueness_level = match.group(5)
-    #
-    #         # If both of these are filled out, we have a variable-length subtable call
-    #         if base_num_to_gen != None and end_num_to_gen != None:
-    #             end_num_to_gen = end_num_to_gen[1:]
-    #             num_to_gen = random.randint(int(base_num_to_gen), int(end_num_to_gen))
-    #         elif base_num_to_gen == None:
-    #             num_to_gen = 1
-    #         else:
-    #             num_to_gen = int(base_num_to_gen)
-    #
-    #         if uniqueness_level == None:
-    #             uniqueness_level = 0
-    #         else:
-    #             uniqueness_level = int(uniqueness_level)
-    #
-    #         logging.info(f'making call to subtable {subtable_id} with num_to_gen={num_to_gen} and uniqueness_level={uniqueness_level}.')
-    #
-    #         params = {'num':num_to_gen, 'uniqueness_level':uniqueness_level}
-    #         subtable_choices, state = self.parent.call_subtable(subtable_id, params)
-    #         self.merge_state(state)
-    #
-    #         choice_to_expand, open, close = choices_util.handle_brace_enclosure(match.start(), choice_to_expand, delete_all=False)
-    #         # choice_to_expand = process_brace_clause(choice_to_expand, '@' + subtable_id, delete=False)
-    #         choice_to_expand = choice_to_expand.replace(full_match, subtable_choices[0], 1)
-    #         choice_to_expand = replace_repeated_subtable_clauses(choice_to_expand, subtable_choices, subtable_id)
-    #         # Since the other clauses could be anywhere, we just back up to the beginning again.
-    #         start = 0
-    #         if tag:
-    #             start = choice_to_expand.find(tag.symbol)
-    #
-    #         # match = subtable_replace.search(choice_to_expand)
-    #         match = choices_util.get_next_match(choice_to_expand, subtable_replace, start)
-    #     return choice_to_expand
 
     def pick_choice(self, filtered_choices, choice_to_expand, tag):
         clause_modded_weights_by_uuid = {wc.uuid: self.get_clause_modded_weight(wc) for wc in filtered_choices}
@@ -317,49 +205,6 @@ def prepare_tags(choice_to_expand):
             match = re.search('\$(?!\[\d+\])', choice_to_expand)
             choice_to_expand = choice_to_expand[:match.start()] + symbol + choice_to_expand[match.start()+1:]
     return choice_to_expand, tags
-
-# def replace_repeated_subtable_clauses(choice_to_expand, subtable_choices, subtable_id):
-#     logging.debug(f'subtable generated values: {subtable_choices}')
-#     # Matches using results beyond the first are of the form '@\dsubtable_id'.
-#     i = 2
-#     for choice in subtable_choices[1:]:
-#         # Add two, because we start counting at 1, and have already used
-#         # one value above.
-#         numbered_id = '@' + str(i) + subtable_id
-#         id_index = choice_to_expand.index(numbered_id)
-#         logging.debug(f'subtable numbered_id: {numbered_id}')
-#         choice_to_expand, _, _ = choices_util.handle_brace_enclosure(id_index, choice_to_expand, delete_all=False)
-#         # choice_to_expand = process_brace_clause(choice_to_expand, numbered_id, delete=False)
-#         choice_to_expand = choice_to_expand.replace(numbered_id, choice, 1)
-#         i += 1
-#
-#     numbered_id = '@' + str(i) + subtable_id
-#     id_index = choice_to_expand.index(numbered_id)
-#     while numbered_id in choice_to_expand:
-#         logging.debug(f'Removing subtable clause, numbered_id: {numbered_id}')
-#         choice_to_expand, _, _ = choices_util.handle_brace_enclosure(id_index, choice_to_expand, delete_all=True)
-#         # choice_to_expand = process_brace_clause(choice_to_expand, numbered_id, delete=True)
-#         i += 1
-#         numbered_id = '@' + str(i) + subtable_id
-#     return choice_to_expand
-
-# def process_brace_clause(generated_choice, numbered_id, delete=False):
-#     choice_loc = generated_choice.index(numbered_id)
-#     try:
-#         first_brace = generated_choice.rindex('{', 0, choice_loc)
-#         last_brace = generated_choice.index('}', choice_loc)
-#     except ValueError:
-#         logging.info(f'no braces found for numbered_id "{numbered_id}" in choice "{generated_choice}".')
-#         return generated_choice
-#     if delete:
-#         # Delete everything inside the braces.
-#         result = generated_choice[:first_brace] + generated_choice[last_brace+1:]
-#     else:
-#         # Remove the braces.
-#         result = generated_choice[:first_brace] + generated_choice[first_brace+1:last_brace] + generated_choice[last_brace+1:]
-#
-#     logging.debug(f'choice after processing braces: {result}')
-#     return result
 
 
 # if __name__ == '__main__':

@@ -171,28 +171,6 @@ def evaluate_value_modification(condition, target, state):
     else:
         raise ValueError(f'condition "{condition}" passed to evaluate_value_modification was not of a value modification form!')
 
-# def handle_state_effects(to_replace, tag_loc, state):
-#     next_tag_loc = to_replace.find('$', tag_loc+1)
-#     if next_tag_loc == -1: # was !=
-#         next_tag_loc = len(to_replace)
-#     to_replace = to_replace[tag_loc+1:]
-#
-#     start = to_replace.find('%', tag_log+1, next_tag_loc)
-#     end = to_replace.find('%', start+1, next_tag_loc)
-#
-#     while start != -1:
-#         assert end != -1, f'Found starting % but didn\'t find matching one in line {line} while processing location {tag_loc}.'
-#         clause = to_replace[start:end+1]
-#
-#         if re.match(STATE_REGEXES['state_modification'], clause) or re.match(STATE_REGEXES['conditional_state_modification'], clause):
-#             evaluate_state_modification(clause, state)
-#         elif re.match(STATE_REGEXES['state_interpolation'], clause) or re.match(STATE_REGEXES['conditional_state_interpolation'], clause):
-#             replace_state_interpolation(to_replace, clause, state)
-#
-#     start = to_replace.find('%', end+1, next_tag_loc)
-#     end = to_replace.find('%', start+1, next_tag_loc)
-
-
 def evaluate_state_modification(condition, state):
     handler = StateClauseHandler()
     handler.condition = condition
@@ -221,16 +199,7 @@ def replace_state_interpolation(to_replace, tag, state):
     start = 0
     if tag:
         start = to_replace.find(tag.symbol)
-    # logging.debug(f'Starting from character {start}.')
-    # logging.debug(f'narrowed range to {to_replace[start:]}')
-    # next_tag_loc = to_replace.find('$', tag_loc+1)
-    # if next_tag_loc == -1: # was !=
-    #     next_tag_loc = len(to_replace)
-    # start, end = find_endpoints_for_interpolation(to_replace, tag)
-    # match = pattern.search(to_replace, start, end)
-    # start = to_replace.find('%', 0, next_tag_loc)
-    # end = to_replace.find('%', start+1, next_tag_loc)
-    # first_loop = True
+
     while True:
         # first_loop = False
         match = choices_util.get_next_match(to_replace, pattern, start)
@@ -252,12 +221,6 @@ def replace_state_interpolation(to_replace, tag, state):
         else:
             to_replace, open, close = choices_util.handle_brace_enclosure(match.start(), to_replace, True)
             if open != None and close != None:
-            # logging.debug(f'state missing for {state_name}, removing it')
-            # open, close = choices_util.get_enclosing_braces(match.start(), to_replace, '{', '}')
-            # if any([open, close]):
-            #     assert all([open, close]), f'Enclosing braces for clause {clause} in replacement string {to_replace} when processing tag {tag} were not both found. Returned locations were {open}, {close}.'
-            #     logging.debug(f'braces found, removing everything in {to_replace[open:close+1]}')
-            #     to_replace = to_replace[:open] + to_replace[close+1:]
                 # Back up however far the string has been modified before start.
                 start = choices_util.backup_for_deletion(start, open, close)
             else:

@@ -1,7 +1,7 @@
 test_places
 
 1 $, iowa
-  500 $[2], Cedar Rapids$[1]
+  500 $[2], Cedar Rapids$[1]%not_present%
     1 , the city of five seasons %"a"=="a"->smell:+=50%
     10 , the city of five smells %5>4->smell:+=100%
     $
@@ -28,5 +28,5 @@ test_places
     1 USA
   1 NorCal %wildfires:="also bad"%
   $
-  10 , The World{ (Home of the %nthcali% $!}
-    10 San Diego!
+  10 , The World{ (Home of the %nthcali% $!)}
+    10 San Diego, with %wildfires% wildfires!
