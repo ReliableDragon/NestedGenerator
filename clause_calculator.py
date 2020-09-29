@@ -4,88 +4,90 @@ import re
 
 import set_up_logging
 
+PRIORITY = {
+    '(': 99,
+    '!': 8,
+    'UM': 7,
+    '^': 6,
+    '*': 5,
+    '/': 5,
+    '+': 3,
+    '-': 3,
+    '==': 2,
+    '!=': 2,
+    '<':2,
+    '>': 2,
+    '>=': 2,
+    '<=': 2,
+    '&&': 1,
+    '||': 0,
+    ')': -99,
+}
 SYMBOL_PRIORITY = {'(': 10, 'UM': 7, '^': 6, '*': 5, '/': 5, '+': 3, '-': 3, ')': 1}
-
-def is_quoted_string(clause):
-    return clause[0] == '"' and clause[-1] == '"'
-
-def is_only_state(clause):
-    return re.fullmatch('[a-zA-Z]\w+', clause)
-
-def is_string_calculation(clause):
-    return clause.find('"') != -1
-
-def get_token_value(token, state):
-    if token[0] == '"' and token[-1] == '"':
-        return token.strip('"')
-    else:
-        return str(state[token])
-
-def calculate_string(clause, state):
-    # logging.debug(f'Calculating string value for "{clause}"')
-    is_raw_str = False
-    token = ''
-    result = ''
-
-    for char in clause:
-        logging.debug(f'char  {char} is_raw_str {is_raw_str} token {token} result {result}')
-        if char == '"':
-            is_raw_str = not is_raw_str
-        if is_raw_str:
-            token += char
-            continue
-        if char == '+':
-            result += get_token_value(token, state)
-            token = ''
-        if char not in ' +':
-            token += char
-    logging.debug(f'token  {token} result {result}')
-    result += get_token_value(token, state)
-    # logging.debug(f'Calculated string value of "{result}"')
-    return result
+BOOLEAN_PRIORITY = {'(': 10, '==': 8, '!=': 8, '<':8, '>': 8, '>=': 8, '<=': 8, '&&': 7, '||': 6, ')': 1}
+COMPARISON_SYMBOLS = '!=<>|&'
+OPERAND_TOKENS = COMPARISON_SYMBOLS + '()^*/+-UM'
 
 def calculate(clause, state):
     logging.debug(f'Calculating value of expression {clause}, with state {state}.')
-    if is_string_calculation(clause):
-        clause = calculate_string(clause, state)
-        logging.debug(f'Got string calculation for {clause}.')
-        return clause
-    elif is_only_state(clause):
-        logging.debug(f'Got lone state for {clause}.')
-        return state[clause]
     op_stack = []
     val_stack = []
 
-    # Strip space and add wrapping parens
-    clause = clause.replace(' ', '')
+    # Add wrapping parens
     clause = '(' + clause + ')'
 
-    curr_sym = ''
+    token = ''
 
-    for i, c in enumerate(clause):
+    quoted = False
+
+    i = -1
+    while True:
+        i += 1
+        if i >= len(clause):
+            break
+        c = clause[i]
+        logging.debug(f'c: {c}, op_stack: {op_stack}, val_stack: {val_stack}, token: {token}, quoted: {quoted}')
+
+        if c == '"':
+            quoted = not quoted
+        if quoted:
+            token += c
+            continue
+        if c == ' ':
+            continue
 
         if c == '(':
-            assert not curr_sym, f'Got an open paren at character {i} while current symbol was non-empty ({curr_sym}) while calculating {clause}!'
+            assert not token, f'Got an open paren at character {i} while current symbol was non-empty ({token}) while calculating {clause}!'
             op_stack.append(c)
             continue
 
-        if c == '-' and not curr_sym:
+        if c == '-' and not token:
             c = 'UM' #unary minus
+        if c == '!' and not token:
+            c = 'NOT' #unary not
 
-        if c not in SYMBOL_PRIORITY.keys():
-            curr_sym += c
+        if c not in OPERAND_TOKENS:
+            token += c
             continue
 
-        if curr_sym:
-            try:
-                val = float(curr_sym)
-            except ValueError:
-                val = state[curr_sym]
-                assert isinstance(val, int), f'Got non-integer value {val} for state {curr_sym} when evaluating {clause}.'
-            curr_sym = ''
+        if token:
+            if token[-1] == '"':
+                val = token[1:-1]
+            else:
+                try:
+                    val = float(token)
+                except ValueError:
+                    val = state[token]
+                    # assert isinstance(val, int), f'Got non-integer value {val} for state {token} when evaluating {clause}.'
+            token = ''
             val_stack.append(val)
 
-        while op_stack and (len(op_stack) == 1 or SYMBOL_PRIORITY[c] <= SYMBOL_PRIORITY[op_stack[-1]]) and op_stack[-1] != '(':
+        if c in COMPARISON_SYMBOLS and i != len(clause)-1 and clause[i+1] in COMPARISON_SYMBOLS:
+            i += 1
+            c += clause[i]
+            logging.debug(f'Got two-symbol comparator {c}.')
+
+        while op_stack and (len(op_stack) == 1 or PRIORITY[c] <= PRIORITY[op_stack[-1]]) and op_stack[-1] != '(':
             operand = op_stack.pop()
             if operand == 'UM':
                 to_negate = val_stack.pop()
@@ -97,18 +99,44 @@ def calculate(clause, state):
             lhs = val_stack.pop()
             logging.debug(f'Calculating "{lhs} {operand} {rhs}".')
 
+            if isinstance(rhs, str):
+                lhs = str(lhs)
+            elif isinstance(lhs, str):
+                rhs = str(rhs)
+
             if operand == '^':
-                val_stack.append(lhs ** rhs)
+                value = lhs ** rhs
             elif operand == '*':
-                val_stack.append(lhs * rhs)
+                value = lhs * rhs
             elif operand == '/':
-                val_stack.append(lhs / rhs)
+                value = lhs / rhs
             elif operand == '+':
-                val_stack.append(lhs + rhs)
+                value = lhs + rhs
             elif operand == '-':
-                val_stack.append(lhs - rhs)
+                value = lhs - rhs
+            elif operand == '||':
+                value = lhs or rhs
+            elif operand == '&&':
+                value = lhs and rhs
+            elif operand == '==':
+                value = lhs == rhs
+            elif operand == '!=':
+                value = lhs != rhs
+            elif operand == '>':
+                value = lhs > rhs
+            elif operand == '<':
+                value = lhs < rhs
+            elif operand == '>=':
+                value = lhs >= rhs
+            elif operand == '<=':
+                value = lhs <= rhs
+            elif operand == 'NOT':
+                value = not value
             else:
                 raise ValueError(f'Got unrecognized operand {operand} at character {i} while calculating {clause}!')
+
+            logging.debug(f'Calculated "{value}".')
+            val_stack.append(value)
 
         if c == ')':
             assert op_stack[-1] == '(', f'Got close parenthesis at character {i} that didn\'t match with open parenthesis in current operand stack {op_stack} while calculating {clause}!'
@@ -119,16 +147,28 @@ def calculate(clause, state):
     assert len(op_stack) == 0, f'Operand stack expected to contain no elements, but was {op_stack} after calculating {clause}!'
     assert len(val_stack) == 1, f'Value stack expected to contain one element, but was {val_stack} after calculating {clause}!'
     logging.debug(f'Calculated value of {val_stack[-1]} for clause {clause}.')
-    return math.floor(val_stack.pop())
+
+    result = val_stack.pop()
+    if isinstance(result, float):
+        try:
+            result = math.floor(result)
+        except TypeError:
+            # It's a string
+            pass
+    return result
+
 
 if __name__ == '__main__':
     set_up_logging.set_up_logging()
 
-    print(calculate('10-(10+thousand*wealth)', {'wealth': 10, 'thousand': 1000}))
-    print(calculate('1+1*2+(2*(3/3+3))/thousand', {'wealth': 10, 'thousand': 1000}))
-    print(calculate('(((((((2^5)))))))', {'wealth': 10, 'thousand': 1000}))
-    print(calculate('"pretty pretty princesses"', {}))
-    print(calculate('name', {'name': 'Gabe'}))
-    print(calculate('-(1+-3*-4)', {}))
-    print(calculate('"test" + "test"', {}))
-    print(calculate('"data: " + data', {'data': 12345}))
+    print(calculate('10-(10+thousand*wealth)', {'wealth': 10, 'thousand': 1000})) # -10000
+    print(calculate('1+1*2+(2*(3/3+3))/thousand', {'wealth': 10, 'thousand': 1000})) # 3
+    print(calculate('(((((((2^5)))))))', {'wealth': 10, 'thousand': 1000})) #32
+    print(calculate('"pretty pretty princesses"', {})) # see title
+    print(calculate('name', {'name': 'Gabe'})) # Gabe
+    print(calculate('-(1+-3*-4)', {})) # -13
+    print(calculate('"test" + "test"', {})) # testtest
+    print(calculate('"data: " + data', {'data': 12345})) # data: 12345
+    print(calculate('"12345" == "123" + fourfive', {'fourfive': 45}))
+    print(calculate('"abhorent" > "bad" && (12 + (dogs * cats) == 12 * 6 && "meemo" == "me" + "moo")', {'dogs': 2, 'cats': 3}))
+    print(calculate('!"True" == "False"', {})) # We don't have booleans, so unary NOT is pretty useless. But technically included.

@@ -1,7 +1,7 @@
 random_npc
 name_syllables:name_syllables.txt
 
-1 $[1], a $[4] year(s) old $[3] $[2]. They are $[5]%relationship:@%, and {have $[6]}{don't have} children.
+1 $[1], a $[4] year(s) old $[3] $[2]. They are $[5]%relationship:@%, and have $[6] children.
 %children==0->"don't have"%%children>0->"Have " + childen% children.'
 if job_override:
     char += f'They run a {job_override}'
@@ -27,13 +27,14 @@ char += f'They are a level {level} {npc_class}.\n'
   $
   1 [5,8G%age%]%*=age_pct/100%
   $
-  1 single %relationship:@%
-  1%-=(13 - age/(age_pct/100))% courting %relationship:@%
-  1%-=(18 - age/(age_pct/100))% engaged %relationship:@%
-  1%-=(18 - age/(age_pct/100))% married %relationship:@%
-  1%-=(25 - age/(age_pct/100))% widowed %relationship:@%
-  1%-=(25 - age/(age_pct/100))% divorced %relationship:@%
+  1 single
+  1%age/(age_pct/100)<13->-=1% courting
+  1%age/(age_pct/100)<18->-=1% engaged
+  1%age/(age_pct/100)<18->-=1% married
+  1%age/(age_pct/100)<25->-=1% widowed
+  1%age/(age_pct/100)<25->-=1% divorced
   $
   1%relationship=="single"% 0
-  
+  1%relationship=="courting"% 0
+  1
   
