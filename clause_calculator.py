@@ -12,18 +12,49 @@ def is_quoted_string(clause):
 def is_only_state(clause):
     return re.fullmatch('[a-zA-Z]\w+', clause)
 
+def is_string_calculation(clause):
+    return clause.find('"') != -1
+
+def get_token_value(token, state):
+    if token[0] == '"' and token[-1] == '"':
+        return token.strip('"')
+    else:
+        return str(state[token])
+
+def calculate_string(clause, state):
+    # logging.debug(f'Calculating string value for "{clause}"')
+    is_raw_str = False
+    token = ''
+    result = ''
+
+    for char in clause:
+        logging.debug(f'char  {char} is_raw_str {is_raw_str} token {token} result {result}')
+        if char == '"':
+            is_raw_str = not is_raw_str
+        if is_raw_str:
+            token += char
+            continue
+        if char == '+':
+            result += get_token_value(token, state)
+            token = ''
+        if char not in ' +':
+            token += char
+    logging.debug(f'token  {token} result {result}')
+    result += get_token_value(token, state)
+    # logging.debug(f'Calculated string value of "{result}"')
+    return result
+
 def calculate(clause, state):
-    if is_quoted_string(clause):
-        logging.debug(f'Got lone string for {clause}.')
+    logging.debug(f'Calculating value of expression {clause}, with state {state}.')
+    if is_string_calculation(clause):
+        clause = calculate_string(clause, state)
+        logging.debug(f'Got string calculation for {clause}.')
         return clause
     elif is_only_state(clause):
         logging.debug(f'Got lone state for {clause}.')
         return state[clause]
-
-    logging.debug(f'Calculating value of expression {clause}, with state {state}.')
     op_stack = []
     val_stack = []
-    stack = []
 
     # Strip space and add wrapping parens
     clause = clause.replace(' ', '')
@@ -99,3 +130,5 @@ if __name__ == '__main__':
     print(calculate('"pretty pretty princesses"', {}))
     print(calculate('name', {'name': 'Gabe'}))
     print(calculate('-(1+-3*-4)', {}))
+    print(calculate('"test" + "test"', {}))
+    print(calculate('"data: " + data', {'data': 12345}))

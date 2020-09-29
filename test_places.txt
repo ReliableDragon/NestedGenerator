@@ -20,12 +20,14 @@ test_places
 100 $, washington
   1 $, Seattle [1-5]%wildfires=="hella"->*=100%
     1 $, Capitol Hill [10-3N%capvalue%]
-      1
-    1 {Country 1: @countries_table[2,-1]}{ Country 2: @2countries_table}{ Country 3: @3countries_table}
+      1 %capvalue>0->"wildfires: "+wildfires%%capvalue<0->capvalue%
+    100 {Country 1: @countries_table[2,-1]}{ Country 2: @2countries_table}{ Country 3: @3countries_table}
 
 10000 San Francisco[1-10], $$
   100 California [1-5%nthcali%], $ %wildfires:="hella"%
-    1 USA
+    1 USA $%country:@% %country%
+      1 USA $
+        1 UK %country:@%
   1 NorCal %wildfires:="also bad"%
   $
   10 , The World{ (Home of the %nthcali% $!)}

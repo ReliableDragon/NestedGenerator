@@ -125,13 +125,14 @@ Choices can write and read state. This can allow you to make choices more consis
 'wealth' counter, which could make future expensive choices more likely. The symbol '%' is used for state manipulations.
 
 ### Writing State
-State can be written by writing '$statename:$value_modification', inside of a pair of '%'. State names are of the form '[a-zA-Z]\w+, allowed
-operations are '+=', '-=', '*=', '/=', '^=', and '=', and allowed value modifications are integers or other states. The exact format is
+State can be written by writing '$statename:$operation$value_modification', inside of a pair of '%'. State names are of the form '[a-zA-Z]\w+, allowed operations are '+=', '-=', '*=', '/=', '^=', and '=', and allowed value modifications are integers or other states. The exact format is
 '%[a-zA-Z]\w+:[+=-/\*]"?[\w ]+"?%'.
 * State writing operations must occur at the end of a line.
 * The first '%' must be preceded by a space.
 * Multiple state writing operations on one line are allowed.
 * All states default to the value 0.
+* The special token "@" is also allowed as an operation, and sets the specified state to the current choice value. It does not allow a
+value modification to be provided, since the value modification is the current choice.
 
 For example, a choice that writes '50' to the state 'wealth' would be:
 ```
@@ -189,11 +190,17 @@ equality/inequality. Other operations may work, but are not supported.
 For example, you could set the 'nobility' state to 'baron', and check against it later on, but there is no ability to see if a string is in a list,
 check if it's a substring of another string, or anything like that.
 
+### String Expressions in State Manipulations
+Strings can be concatenated in expressions with "+". They can be concatenated with other strings, or with states.
+
 ### Interpolation
 State values can be inserted into a choice by putting the state name, surrounded by percent signs, such as '%my_state%'. The state will then be
 replaced by whatever value is in that state when that clause is evaluated. (For more on evaluation order, see below.) If the state is not present
 when evaluated, the interpolation test will be removed. If there is any choice text associated with the interpolation, you can surround it in a
 bracket clause, as detailed above.
+
+### Storing Tag Results
+It's possible to store the results of a sub-choice into a state by appending a clause of the form '%state_name:@%' after the tag ("$").
 
 ### Execution Order
 Execution occurs from left to right, evaluating each substitution token, subtable call, and random number generation as it is found,

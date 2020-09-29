@@ -106,6 +106,10 @@ class ChoiceGenerator():
             # logging.debug(f'Doing replacements for tag {tag.symbol} on {choice_to_expand}"')
             choice_to_expand = self.make_replacements(choice_to_expand, tag)
 
+            choice_to_expand, state_to_update = state_clause_handler.process_state_tag(choice_to_expand, tag)
+            if state_to_update:
+                self.state[state_to_update] = recursed_choice
+
             choice_to_expand = choice_to_expand.replace(tag.symbol, recursed_choice, 1)
 
             # logging.debug(f'choice_to_expand, level {self.level}: {choice_to_expand}\n\n')
@@ -128,9 +132,11 @@ class ChoiceGenerator():
     def extract_state(self, generated_choice):
         state_pattern = re.compile(state_clause_handler.STATE_REGEXES['omni_state_modification'])
         match = state_pattern.search(generated_choice)
+        if match:
+            base_result = generated_choice[:match.start()]
         while match:
             clause = generated_choice[match.start():match.end()]
-            state, value = state_clause_handler.evaluate_state_modification(clause, self.state)
+            state, value = state_clause_handler.evaluate_state_modification(clause, base_result, self.state)
             if isinstance(value, str):
                 value = value.strip('"')
             self.state[state] = value

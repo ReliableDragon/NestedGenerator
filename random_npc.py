@@ -35,7 +35,7 @@ def create_character(job_override=None):
   else:
       relationship = relationships[rand.randint(0, len(relationships)-1)]
 
-  children = 0 if relationship in ['single', 'engaged'] else min(rand.randint(0, 6), age - 18 // 2)
+  children = 0 if relationship in ['single', 'courting', 'engaged'] else min(rand.randint(0, 6), age - 18 // 2)
 
   jobs = ['butcher', 'baker', 'farmer', 'grocer', 'glassblower', 'blacksmith', 'tanner', 'clothier',
           'leatherworker', 'florist', 'shepherd', 'hunter', 'woodsman', 'lumberjack', 'construction worker',
