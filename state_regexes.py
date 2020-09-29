@@ -11,9 +11,9 @@ STRING_CALCULATION = '(?:(?:"[^%]+?")|\+|(?:[a-zA-Z]\w+))+'
 CALCULATION_CLAUSE_RE = f'({MATH_CALCULATION}|{STRING_CALCULATION})'
 COMPARATOR_RE = '([=<>!]{1,2})'
 EFFECT_RE = '([\^\-\+/\*]=|=)'
-CURRENT_VALUE_RE = '(@)'
+CURRENT_VALUE_RE = '@'
 CONDITION_RE = f'{CALCULATION_CLAUSE_RE}{COMPARATOR_RE}{CALCULATION_CLAUSE_RE}'
-STATE_MOD_EFFECT_RE = f'({STATE_RE}):(?:{EFFECT_RE}{FULL_COMPARISON}|{CURRENT_VALUE_RE})'
+STATE_MOD_EFFECT_RE = f'({STATE_RE}):(?:{EFFECT_RE}{FULL_COMPARISON}|({CURRENT_VALUE_RE}))'
 
 VALID_COMPARISONS = ['==', '>=', '>', '<=', '<', '!=']
 STATE_REGEXES = {
@@ -30,5 +30,5 @@ STATE_REGEXES = {
     'omni_state_interpolation': f'%(?:({FULL_COMPARISON})(?:->))?{FULL_COMPARISON}%',
 
     'plain_state_interpolation': f'%(?:{FULL_COMPARISON}->)?({STATE_RE})%',
-    'tag_state': f'%({STATE_RE}):{CURRENT_VALUE_RE}%'
+    'tag_state': f'%({STATE_RE}):({CURRENT_VALUE_RE})%'
 }

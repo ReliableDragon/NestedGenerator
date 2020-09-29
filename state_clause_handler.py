@@ -206,7 +206,7 @@ def evaluate_state_interpolation(condition, state):
 
 
 def process_state_tag(choice_to_expand, tag):
-    # logging.debug(f'Processing state tag for tag {tag} on {choice_to_expand}')
+    logging.debug(f'Processing state tag for tag {tag} on {choice_to_expand}')
     start = choice_to_expand.find(tag.symbol)
     tag_end = start + len(tag.symbol)
     tag_truncated_choice = choice_to_expand[tag_end:]
@@ -214,9 +214,10 @@ def process_state_tag(choice_to_expand, tag):
     pattern = re.compile(STATE_REGEXES['tag_state'])
     match = pattern.match(choice_to_expand, tag_end)
     if match:
-        # logging.debug(f'Got match {match}')
+        logging.debug(f'Got match {match}')
         state_to_update = match.group(1)
         choice_to_expand = choice_to_expand[:match.start()] + choice_to_expand[match.end():]
+        logging.debug(f'Found state {state_to_update} to store value in.')
         return choice_to_expand, state_to_update
     else:
         # logging.debug(f'No match')

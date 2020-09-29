@@ -46,7 +46,7 @@ def calculate(clause, state):
         if i >= len(clause):
             break
         c = clause[i]
-        # logging.debug(f'c: {c}, op_stack: {op_stack}, val_stack: {val_stack}, token: {token}, quoted: {quoted}')
+        # logging.debug(f'c: {c}, op_stack: {op_stack}, val_stack: {val_stack}, token: `{token}`, quoted: {quoted}')
 
         if c == '"':
             quoted = not quoted
@@ -57,7 +57,7 @@ def calculate(clause, state):
             continue
 
         if c == '(':
-            assert not token, f'Got an open paren at character {i} while current symbol was non-empty ({token}) while calculating {clause}!'
+            # assert not token, f'Got an open paren at character {i} while current symbol was non-empty ({token}) while calculating {clause}!'
             op_stack.append(c)
             continue
 
@@ -82,7 +82,14 @@ def calculate(clause, state):
                 try:
                     val = float(token)
                 except ValueError:
+                    if token not in state.keys():
+                        logging.info(f'Accessing token {token} that is not present in state {state}! This may be intentional use of the default property, or you may be using a token that is not yet defined. (Did you double check your spelling?)')
                     val = state[token]
+                    try:
+                        val = float(val)
+                    except:
+                        # String value was in state.
+                        pass
                     # assert isinstance(val, int), f'Got non-integer value {val} for state {token} when evaluating {clause}.'
             token = ''
             val_stack.append(val)
@@ -102,11 +109,13 @@ def calculate(clause, state):
             # logging.debug(f'op_stack: {op_stack[-1]}')
             rhs = val_stack.pop()
             lhs = val_stack.pop()
-            # logging.debug(f'Calculating "{lhs} {operand} {rhs}".')
+            logging.debug(f'Calculating "{lhs} {operand} {rhs}".')
 
             if isinstance(rhs, str):
+                lhs = try_int_conversion(lhs)
                 lhs = str(lhs)
             elif isinstance(lhs, str):
+                rhs = try_int_conversion(rhs)
                 rhs = str(rhs)
 
             if operand == '^':
@@ -154,13 +163,21 @@ def calculate(clause, state):
     logging.debug(f'Calculated value of {val_stack[-1]} for clause {clause}.')
 
     result = val_stack.pop()
-    if isinstance(result, float):
-        try:
-            result = math.floor(result)
-        except TypeError:
-            # It's a string
-            pass
+    result = try_int_conversion(result)
+    # if isinstance(result, float):
+    #     try:
+    #         result = math.floor(result)
+    #     except TypeError:
+    #         # It's a string
+    #         pass
     return result
+
+def try_int_conversion(maybe_num):
+    try:
+        return math.floor(maybe_num)
+    except TypeError:
+        # It's a string
+        return maybe_num
 
 
 if __name__ == '__main__':

@@ -98,6 +98,11 @@ class ChoiceGenerator():
             self.dict_and_choice_backtrace.pop()
             self.level -= 1
 
+            choice_to_expand, state_to_update = state_clause_handler.process_state_tag(choice_to_expand, tag)
+            if state_to_update:
+                # logging.debug(f'Storing value {recursed_choice} into state {state_to_update}.')
+                self.state[state_to_update] = recursed_choice
+
             # Now that we have all of our state updated from the recursive call,
             # we can use that information to replace any state interpolations
             # present between this substitution symbol and the next, or remove
@@ -109,11 +114,11 @@ class ChoiceGenerator():
             # logging.debug(f'Doing replacements for tag {tag.symbol} on {choice_to_expand}"')
             choice_to_expand = self.make_replacements(choice_to_expand, tag)
 
-            choice_to_expand, state_to_update = state_clause_handler.process_state_tag(choice_to_expand, tag)
-            if state_to_update:
-                self.state[state_to_update] = recursed_choice
-
-            choice_to_expand = choice_to_expand.replace(tag.symbol, recursed_choice, 1)
+            # If the tag is surrounded by brackets, it's a silent call, so we delete it.
+            if f'{{{tag.symbol}}}' in choice_to_expand:
+                choice_to_expand = choice_to_expand.replace(f'{{{tag.symbol}}}', '', 1)
+            else:
+                choice_to_expand = choice_to_expand.replace(tag.symbol, recursed_choice, 1)
 
             # logging.debug(f'choice_to_expand, level {self.level}: {choice_to_expand}\n\n')
 
