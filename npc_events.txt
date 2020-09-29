@@ -1,4 +1,5 @@
 npc_events
+generic_shops:generic_shops.txt
 
 100 They grew up $
   100 poor, and had to struggle for everything they've gained. $
@@ -55,13 +56,17 @@ npc_events
     50 they have an injury that makes it difficult
     50 they were forced into it against their will
 
-30 Their $ was injured $
+30 Their $ was $ injured $
   50 arm
   30 head
   50 leg
   20 head
   25 foot
   25 hand
+  $
+  10
+  3 grievously
+  5 minorly
   $
   100 when they $
     100 fell off a horse
@@ -73,7 +78,6 @@ npc_events
       10 orc
   25 in a duel
   25 while they were in the army
-  100 several years ago
 
 20 They are secretly a member of $
   10 a group of Neo-Orc supporters
@@ -110,7 +114,7 @@ npc_events
         100 a group of monks
         10 a minor nobleman
         100 a kindly $
-          100 @random_jobs
+          100 @generic_shops owner
 
 100 They have a weakness for $
   100 alcohol, and their drink of choice is $
@@ -133,7 +137,7 @@ npc_events
   10 rescue a $ from debtor's prison
     10 friend
     10 family member
-  50 follow their dream and become a @random_jobs
+  50 follow their dream and become a @generic_shops owner
   25 run away to $
     10 the dwarven lands
     10 the halfling lands

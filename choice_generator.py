@@ -8,6 +8,8 @@ import state_clause_handler
 import choices_util
 import subtable_calls
 import range_replacements
+import interpolation_replacements
+from state_regexes import STATE_REGEXES
 
 class Tag():
 
@@ -41,6 +43,7 @@ class ChoiceGenerator():
         self.params = params
 
         generated_choice = self.gen_choice_recursive(choices_dict, generated_choice)
+        generated_choice = generated_choice.replace('\\n', '\n')
         logging.info(f'generated_choice: {generated_choice}')
 
         return generated_choice, self.state
@@ -50,7 +53,7 @@ class ChoiceGenerator():
             # There were no tags in which to make replacements, so we need to do it now before extracting state data.
             # choice_to_expand = state_clause_handler.replace_state_interpolation(choice_to_expand, None, self.state)
             choice_to_expand = self.make_replacements(choice_to_expand, None)
-            logging.debug(f'replaced choice_to_expand after no tags found, level {self.level}: {choice_to_expand}')
+            # logging.debug(f'replaced choice_to_expand after no tags found, level {self.level}: {choice_to_expand}')
             choice_to_expand = self.extract_state(choice_to_expand)
             logging.debug(f'State: {self.state}')
             return choice_to_expand
@@ -59,11 +62,11 @@ class ChoiceGenerator():
 
         # Initial replacement to handle any interpolated values inbetween the start of the choice and the
         # first tag.
-        logging.debug(f'initial pre-state interpolation at level {self.level} choice_to_expand: {choice_to_expand}')
-        choice_to_expand = state_clause_handler.replace_state_interpolation(choice_to_expand, None, self.state)
-        logging.debug(f'initial pre-state replacements at level {self.level} choice_to_expand: {choice_to_expand}')
+        # logging.debug(f'initial pre-state interpolation at level {self.level} choice_to_expand: {choice_to_expand}')
+        # choice_to_expand = interpolation_replacements.replace_state_interpolation(choice_to_expand, None, self.state)
+        # logging.debug(f'initial pre-state replacements at level {self.level} choice_to_expand: {choice_to_expand}')
         choice_to_expand = self.make_replacements(choice_to_expand, None)
-        logging.debug(f'initial choice_to_expand, entering tags: {choice_to_expand}')
+        # logging.debug(f'initial choice_to_expand, entering tags: {choice_to_expand}')
 
         for tag in tags:
             if tag.symbol not in choice_to_expand:
@@ -74,7 +77,7 @@ class ChoiceGenerator():
             filtered_choice_list = self.filter_choices_dict(tag.num, choices_dict)
             # logging.debug(f'filtered_choice_list, level {self.level}: {filtered_choice_list}')
             choice_for_tag = self.pick_choice(filtered_choice_list, choice_to_expand, tag)
-            logging.debug(f'weighed_choice, level {self.level}: {choice_for_tag}')
+            # logging.debug(f'weighed_choice, level {self.level}: {choice_for_tag}')
             # choice_for_tag.choice = self.make_replacements(choice_for_tag.choice)
             # logging.debug(f'replaced weighed_choice, level {self.level}: {choice_for_tag}')
 
@@ -84,14 +87,14 @@ class ChoiceGenerator():
             elif not choices_dict[choice_for_tag] and self.params['uniqueness_level'] == -1:
                 # If there's nothing in the corresponding list, we're at a leaf node
                 # and are done generating this choice, so uniqueness_level -1 applies.
-                logging.info(f'appending choice_for_tag {choice_for_tag} to used_choices!')
+                # logging.info(f'appending choice_for_tag {choice_for_tag} to used_choices!')
                 self.used_choices.append(choice_for_tag)
                 self.remove_childless_parents(choice_to_expand, choice_for_tag)
 
             self.dict_and_choice_backtrace.append((choices_dict, choice_for_tag))
             self.level += 1
             recursed_choice = self.gen_choice_recursive(choices_dict[choice_for_tag], choice_for_tag.choice)
-            logging.debug(f'recursed_choice, level {self.level}: {recursed_choice}')
+            # logging.debug(f'recursed_choice, level {self.level}: {recursed_choice}')
             self.dict_and_choice_backtrace.pop()
             self.level -= 1
 
@@ -130,7 +133,7 @@ class ChoiceGenerator():
     # generated_choice: A choice generated during the recursion process which
     # is fully generated. (i.e. has no more '$' in it.)
     def extract_state(self, generated_choice):
-        state_pattern = re.compile(state_clause_handler.STATE_REGEXES['omni_state_modification'])
+        state_pattern = re.compile(STATE_REGEXES['omni_state_modification'])
         match = state_pattern.search(generated_choice)
         if match:
             base_result = generated_choice[:match.start()]
@@ -171,20 +174,20 @@ class ChoiceGenerator():
             removed_weighted_choice = weighted_choice
 
     def make_replacements(self, choice_to_expand, tag):
-        logging.debug(f'Making replacements on {choice_to_expand} for tag {tag}.')
+        # logging.debug(f'Making replacements on {choice_to_expand} for tag {tag}.')
         choice_to_expand, state = range_replacements.replace_ranges(choice_to_expand, tag, self.state)
         self.state = state
-        choice_to_expand = state_clause_handler.replace_state_interpolation(choice_to_expand, None, self.state)
+        choice_to_expand = interpolation_replacements.replace_state_interpolation(choice_to_expand, tag, self.state)
         choice_to_expand, state = subtable_calls.make_subtable_calls(self.parent, choice_to_expand, tag, self.state)
         self.state = state
-        logging.debug(f'Finished making replacements: {choice_to_expand} for tag {tag}.')
+        # logging.debug(f'Finished making replacements: {choice_to_expand} for tag {tag}.')
 
         return choice_to_expand
 
     def pick_choice(self, filtered_choices, choice_to_expand, tag):
         clause_modded_weights_by_uuid = {wc.uuid: self.get_clause_modded_weight(wc) for wc in filtered_choices}
         total_weight = sum(clause_modded_weights_by_uuid.values())
-        assert total_weight > 0, f'Total weight was <= 0, most likely you wrote a generation that removed all valid choices from a config. Choices given were: {filtered_choices}, at level {self.level}, with used_choices of {self.used_choices}, tag: {tag}, choice_to_expand: {choice_to_expand}'
+        assert total_weight > 0, f'Total weight was <= 0, most likely you wrote a generation that removed all valid choices from a config, or didn\'t add enough subchoices. Choices given were: {filtered_choices}, at level {self.level}, with used_choices of {self.used_choices}, tag: {tag}, choice_to_expand: {choice_to_expand}'
         rand = random.randint(1, total_weight)
 
         for wc in filtered_choices:
@@ -194,11 +197,17 @@ class ChoiceGenerator():
         raise ValueError(f'Failed to select a choice when provided {filtered_choices}.')
 
     def get_clause_modded_weight(self, wc):
-        if not wc.clause_list:
+        # if not wc.clause_list:
+        #     return wc.weight
+        # clause_modded_weight = wc.weight
+        # for clause in wc.clause_list:
+        #     clause_modded_weight = state_clause_handler.evaluate_value_modification(clause, clause_modded_weight, self.state)
+        # return clause_modded_weight
+        if not wc.clause:
             return wc.weight
-        clause_modded_weight = wc.weight
-        for clause in wc.clause_list:
-            clause_modded_weight = state_clause_handler.evaluate_value_modification(clause, clause_modded_weight, self.state)
+        # clause_modded_weight = wc.weight
+        # for clause in wc.clause_list:
+        clause_modded_weight = state_clause_handler.evaluate_value_modification(wc.clause, wc.weight, self.state)
         return clause_modded_weight
 
 def prepare_tags(choice_to_expand):

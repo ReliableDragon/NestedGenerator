@@ -20,7 +20,9 @@ def main():
     parser = argparse.ArgumentParser(description='Nested Choice Driver.')
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--street', action='store_true')
+    parser.add_argument('--gen', action='store')
     args = parser.parse_args()
+    print(args.gen)
     if args.debug:
         logging_level = logging.DEBUG
     logging.basicConfig(level=logging_level)
@@ -28,6 +30,10 @@ def main():
     if args.street:
         print(load_and_gen('random_street')[0])
         exit()
+    if args.gen:
+        print(load_and_gen(args.gen)[0])
+        exit()
+
     repl()
 
 def repl():

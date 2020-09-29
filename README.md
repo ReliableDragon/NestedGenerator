@@ -1,7 +1,7 @@
 # NestedGenerator
 Takes nested lists and makes them into fun random outputs. Mostly just a funsies thing.
 
-The config files are where the data is stored that's used for the raondom generation.
+The config files are where the data is stored that's used for the random generation.
 The format isn't too complicated, but there are a fair number of pieces, noted here.
 
 ## Header
@@ -12,7 +12,7 @@ First off, each choice file needs a header, in the following format:
 
 ## Data Lines
 After this comes the data for the choices.
-* Each top-level choice must be preceeded by exactly one blank line (hence why one was required after the header).
+* Each top-level choice must be preceded by exactly one blank line (hence why one was required after the header).
 * Choices are indented to indicate what their parent and sibling choices are.
 * Each choice starts with a number, which represents the relative weight of that choice among its siblings.
 * The format of a choice is (  )*\d+( [^@\[\]\{\}]*)?
@@ -72,7 +72,7 @@ It's possible to store the result of the random number generation into a state, 
 For more on state, see below.
 
 ## Randomly Repeated Sub-namespace Calls (RRSNC)
-It's also possible to randomly choose how many calls to make to a specified sub-namespace. The format for that is '\[\d+-\d+,\d+\]', which is alsmost the same
+It's also possible to randomly choose how many calls to make to a specified sub-namespace. The format for that is '\[\d+-\d+,\d+\]', which is almost the same
 as the standard call, with the exception that the first parameter is now a range. That range will be sampled over uniformly, as with the non-NG RNG above.
 
 For example, '@house_colors[3-5,-1]' would generate between 3 and 5 random house colors, and ensure that each value was unique.

@@ -8,19 +8,20 @@ import argparse
 import state_clause_handler
 import choices_util
 import choice_generator as choice_generator_mod
+from state_regexes import STATE_REGEXES
 
 class WeightedChoice():
-    def __init__(self, weight, choice, tag_num=1, clause_list=None):
+    def __init__(self, weight, choice, tag_num=1, clause=None):
         self.weight = int(weight)
         self.choice = choice
         self.tag_num = tag_num
-        self.clause_list = clause_list
+        self.clause = clause
         self.uuid = uuid.uuid4()
 
     def __str__(self):
         str_rep = f'({self.weight})[{self.tag_num}]'
-        if self.clause_list:
-            str_rep += f'{{{self.clause_list}}}'
+        if self.clause:
+            str_rep += f'{{{self.clause}}}'
         str_rep += f'{self.choice}'
         return str_rep
 
@@ -208,9 +209,9 @@ def load_choice_from_line(line, tag_stack):
         assert choice_text[0] == ' ', f'Choice {line} seems not to have had a space following the state clause affecting the probability. This is against the format.'
         choice_text = choice_text[1:]
         # clause_list = ['%' + clause + '%' for clause in raw_clause]
-        clause_list = state_clause_handler.clause_list_from_raw_clause(raw_clause)
-        # clause = '%' + clause + '%'
-        weighted_choice = WeightedChoice(weight, choice_text, tag_num=tag_stack[-1], clause_list=clause_list)
+        # clause_list = state_clause_handler.clause_list_from_raw_clause(raw_clause)
+        clause = '%' + raw_clause + '%'
+        weighted_choice = WeightedChoice(weight, choice_text, tag_num=tag_stack[-1], clause=clause)
     except TypeError:
         # Empty choice.
         weighted_choice = WeightedChoice(line, '', tag_stack[-1])
@@ -247,8 +248,8 @@ def validate_choices(namespace_id, choices_string):
         if '$' in line and line != (' ' * indent) + '$':
             must_indent = True
 
-        value_patterns = [state_clause_handler.STATE_REGEXES['value_modification'], state_clause_handler.STATE_REGEXES['conditional_value_modification']]
-        state_patterns = [state_clause_handler.STATE_REGEXES['state_modification'], state_clause_handler.STATE_REGEXES['conditional_state_modification']]
+        value_patterns = [STATE_REGEXES['value_modification'], STATE_REGEXES['conditional_value_modification']]
+        state_patterns = [STATE_REGEXES['state_modification'], STATE_REGEXES['conditional_state_modification']]
         loc = 0
         # There are two kinds of state clauses, one of which consumes the space before the '%'
         # and one of which doesn't.  To avoid mistakenly parsing one as the other, we first
@@ -259,23 +260,23 @@ def validate_choices(namespace_id, choices_string):
         clause = line[value_start:value_stop+1]
         state_clause = line[state_start:value_stop+1]
         while value_start != -1:
-            logging.debug(f'value_start: {value_start}, value_stop: {value_stop}, state_start: {state_start}')
-            logging.debug(f'clause: "{clause}"')
-            logging.debug(f'state_clause: "{state_clause}"')
+            # logging.debug(f'value_start: {value_start}, value_stop: {value_stop}, state_start: {state_start}')
+            # logging.debug(f'clause: "{clause}"')
+            # logging.debug(f'state_clause: "{state_clause}"')
             if all(choices_util.get_enclosing_braces(value_start, line, lbrace='[', rbrace=']')):
                 # This is a random number storage state
                 pass
-            elif re.fullmatch(state_clause_handler.STATE_REGEXES['omni_state_interpolation'], clause):
+            elif re.fullmatch(STATE_REGEXES['omni_state_interpolation'], clause):
                 # This is a state interpolation
                 pass
-            elif re.fullmatch(state_clause_handler.STATE_REGEXES['tag_state'], clause):
+            elif re.fullmatch(STATE_REGEXES['tag_state'], clause):
                 # This is a tag state
                 pass
-            elif state_clause != -1 and re.fullmatch(state_clause_handler.STATE_REGEXES['omni_state_modification'], state_clause):
+            elif state_clause != -1 and re.fullmatch(STATE_REGEXES['omni_state_modification'], state_clause):
                 # This is a state modification
                 # clause = line[state_start:value_stop+1]
                 assert(any(map(lambda pattern: re.fullmatch(pattern, state_clause), state_patterns))), f'State modification clause "{state_clause}" in line "{line}" has a format that does not match any valid format for state clauses!'
-            elif re.fullmatch(state_clause_handler.STATE_REGEXES['omni_value_modification'], clause):
+            elif re.fullmatch(STATE_REGEXES['omni_value_modification'], clause):
                 # This is a value modification
                 assert(any(map(lambda pattern: re.fullmatch(pattern, clause), value_patterns))), f'Value modification clause "{clause}" in line "{line}" has a format that does not match any valid format for state clauses!'
             else:
@@ -289,6 +290,7 @@ def validate_choices(namespace_id, choices_string):
 
         prev_indent = indent
 
+    logging.debug('Validated choices.')
 if __name__ == "__main__":
     logging_level = logging.WARNING
     parser = argparse.ArgumentParser(description='Process some integers.')
@@ -304,4 +306,5 @@ if __name__ == "__main__":
     choices = NestedChoices.load_from_file('test_places.txt')
     subtable = NestedChoices.load_from_string_list('countries_table', ['Germany', 'France', 'UK'], [5, 3, 1])
     choices.register_subtable(subtable)
-    print(choices.gen_choices(params={'num': 4, 'uniqueness_level': -1}))
+    for choice in choices.gen_choices(params={'num': 4, 'uniqueness_level': -1}):
+        print(choice)

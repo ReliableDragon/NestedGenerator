@@ -64,7 +64,7 @@ def backup_for_deletion(start, left_endpoint, right_endpoint):
 
 def find_endpoint_for_interpolation(to_replace, start):
     end = len(to_replace)
-    next = to_replace.find('$', start+1)
+    next = to_replace.find('$', start)
     if next != -1:
         end = next
     return end
@@ -72,6 +72,7 @@ def find_endpoint_for_interpolation(to_replace, start):
 def get_next_match(to_replace, pattern, start):
     end = find_endpoint_for_interpolation(to_replace, start)
     # logging.debug(f'Getting next match for {pattern} in range {to_replace[start:end]}')
+    logging.debug(f'Searching over "{to_replace[start:end]}"')
     match = pattern.search(to_replace, start, end)
     # logging.debug(f'Found match {match}.')
     return match

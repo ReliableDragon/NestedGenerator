@@ -2,11 +2,27 @@ name_syllables
 
 1 al
 
+1 and
+
+1 ate
+
 1 ben
+
+1 ber
+
+1 crat
+
+1 chill
+
+1 chan
 
 1 cor
 
 1 dan
+
+1 drak
+
+1 er
 
 1 fan
 
@@ -14,15 +30,25 @@ name_syllables
 
 1 frey
 
-1 gra
-
 1 gar
 
 1 ger
 
-1 hin
+1 gra
 
 1 har
+
+1 hin
+
+1 i
+
+1 lon
+
+1 lil
+
+1 nikov
+
+1 oo
 
 1 par
 
@@ -32,24 +58,16 @@ name_syllables
 
 1 ser
 
+1 son
+
 1 star
+
+1 ton
 
 1 ston
 
-1 nikov
-
 1 wray
 
-1 chill
-
-1 chan
-
-1 lon
-
-1 and
-
-1 drak
-
-1 crat
-
 1 yon
+
+1 zilla

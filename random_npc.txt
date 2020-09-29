@@ -1,40 +1,68 @@
 random_npc
 name_syllables:name_syllables.txt
+generic_shops:generic_shops.txt
+npc_events:npc_events.txt
 
-1 $[1], a $[4] year(s) old $[3] $[2]. They are $[5]%relationship:@%, and have $[6] children.
-%children==0->"don't have"%%children>0->"Have " + childen% children.'
-if job_override:
-    char += f'They run a {job_override}'
-else:
-    char += f'They are a {job}'
-char += f', and are {wealth}.\n'
-char += f'Their greatest desire in life is {desire}.\n'
-char += f'They are a level {level} {npc_class}.\n'
-  10 @name_syllables[2-4]{@2name_syllables}{@3name_syllables}{@4name_syllables}
+1 $[1], a $[4] year(s) old $[3] $[2].\nThey are $[5]%relationship:@%, and have $[6] children.\nThey run a @generic_shops and are $[7].\nTheir greatest desire in life is $[10].\nThey are a level $[9] $[8].\n@npc_events[1-3,1]{\n@2npc_events}{\n@3npc_events}.
+  10 @name_syllables[2-3,0]{@2name_syllables}{@3name_syllables}
   $
   100 human %age_pct:=100%
-  10 elf %age_pct:=1100%
-  10 dwarf %age_pct:=500%
-  20 half-elf %age_pct:=250%
-  5 gnome %age_pct:=600%
-  5 halfling age_pct:=350%
-  4 half-orc %age_pct:=75%
+  5 elf %age_pct:=1100%
+  5 dwarf %age_pct:=500%
+  10 half-elf %age_pct:=250%
+  3 gnome %age_pct:=600%
+  3 halfling %age_pct:=350%
+  2 half-orc %age_pct:=75%
   1 orc %age_pct:=25%
   1 goblin %age_pct:=50%
   $
   1 male
   1 female
   $
-  1 [5,8G%age%]%*=age_pct/100%
+  1 [5-8G%age%]%*=age_pct/100%
   $
-  1 single
-  1%age/(age_pct/100)<13->-=1% courting
-  1%age/(age_pct/100)<18->-=1% engaged
-  1%age/(age_pct/100)<18->-=1% married
-  1%age/(age_pct/100)<25->-=1% widowed
-  1%age/(age_pct/100)<25->-=1% divorced
+  5 single
+  2%age<13->=0% courting
+  2%age<18->=0% engaged
+  10%age<18->=0% married
+  5%age<25->=0% widowed
+  2%age<25->=0% divorced
   $
-  1%relationship=="single"% 0
-  1%relationship=="courting"% 0
-  1
-  
+  0%relationship=="single"||relationship=="courting"||relationship=="engaged"->=1% 0
+  0%relationship=="married"||relationship=="widowed"||relationship=="divorced"->=1% [3-1N]%*=age*3/age_pct%
+  $
+  5 dirt poor
+  10 poor
+  20 getting by
+  10 well off
+  5 rich
+  $
+  50 commoner
+  25 guard
+  10 acolyte
+  5 mage
+  4 fighter
+  2 ranger
+  1 rogue
+  1 bard
+  1 sorcerer
+  1 wizard
+  $
+  1 [1-3G]%+=1+(age/age_pct)*10%
+  $
+  100 wealth
+  50 power
+  50 love
+  30 fame
+  100 peace and quiet
+  30 adventure
+  50 security
+  50 an easy life,
+  30 food
+  50 drink
+  50 friends
+  70 their family
+  10 revenge
+  25 piety
+  5 arcane knowledge
+  $

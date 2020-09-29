@@ -46,7 +46,7 @@ def calculate(clause, state):
         if i >= len(clause):
             break
         c = clause[i]
-        logging.debug(f'c: {c}, op_stack: {op_stack}, val_stack: {val_stack}, token: {token}, quoted: {quoted}')
+        # logging.debug(f'c: {c}, op_stack: {op_stack}, val_stack: {val_stack}, token: {token}, quoted: {quoted}')
 
         if c == '"':
             quoted = not quoted
@@ -61,6 +61,10 @@ def calculate(clause, state):
             op_stack.append(c)
             continue
 
+        # TODO: Parentheses in the op_stack make this messy. e.g. age/(age_pct/100)<13 fails
+        # when the close paren is read in, as the / is still on the op_stack. Rework it to be more readable.
+        # assert not(not token and c in OPERAND_TOKENS and op_stack[-1] not in '()'), f'Got operand token {c} at character {i} with empty token while processing "{clause}"! Did you accidentally put two operations back-to-back?'
+
         if c == '-' and not token:
             c = 'UM' #unary minus
         if c == '!' and not token:
@@ -69,6 +73,7 @@ def calculate(clause, state):
         if c not in OPERAND_TOKENS:
             token += c
             continue
+
 
         if token:
             if token[-1] == '"':
@@ -85,7 +90,7 @@ def calculate(clause, state):
         if c in COMPARISON_SYMBOLS and i != len(clause)-1 and clause[i+1] in COMPARISON_SYMBOLS:
             i += 1
             c += clause[i]
-            logging.debug(f'Got two-symbol comparator {c}.')
+            # logging.debug(f'Got two-symbol comparator {c}.')
 
         while op_stack and (len(op_stack) == 1 or PRIORITY[c] <= PRIORITY[op_stack[-1]]) and op_stack[-1] != '(':
             operand = op_stack.pop()
@@ -94,10 +99,10 @@ def calculate(clause, state):
                 val_stack.append(-1 * to_negate)
                 continue
 
-            logging.debug(f'op_stack: {op_stack[-1]}')
+            # logging.debug(f'op_stack: {op_stack[-1]}')
             rhs = val_stack.pop()
             lhs = val_stack.pop()
-            logging.debug(f'Calculating "{lhs} {operand} {rhs}".')
+            # logging.debug(f'Calculating "{lhs} {operand} {rhs}".')
 
             if isinstance(rhs, str):
                 lhs = str(lhs)
@@ -135,7 +140,7 @@ def calculate(clause, state):
             else:
                 raise ValueError(f'Got unrecognized operand {operand} at character {i} while calculating {clause}!')
 
-            logging.debug(f'Calculated "{value}".')
+            # logging.debug(f'Calculated "{value}".')
             val_stack.append(value)
 
         if c == ')':

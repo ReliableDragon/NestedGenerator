@@ -4,12 +4,12 @@ import random
 import choices_util
 
 def make_subtable_calls(parent, choice_to_expand, tag, state):
-    subtable_replace = re.compile('@([a-zA-Z_]+)(\[(\d+)(-\d+)?, ?(-?\d+)\])?')
+    logging.debug(f'Making subtable calls for tag {tag} on {choice_to_expand}.')
+    subtable_replace = re.compile('@([a-zA-Z_]+)(\[(\d+)(?:-(\d+))?, ?(-?\d+)\])?')
     start = 0
     if tag:
-        start = choice_to_expand.find(tag.symbol)
+        start = choice_to_expand.find(tag.symbol)+len(tag.symbol)
     match = choices_util.get_next_match(choice_to_expand, subtable_replace, start)
-    match = subtable_replace.search(choice_to_expand)
     while match:
         full_match = match.group(0)
         subtable_id = match.group(1)
@@ -19,7 +19,7 @@ def make_subtable_calls(parent, choice_to_expand, tag, state):
 
         # If both of these are filled out, we have a variable-length subtable call
         if base_num_to_gen != None and end_num_to_gen != None:
-            end_num_to_gen = end_num_to_gen[1:]
+            # end_num_to_gen = end_num_to_gen[1:]
             num_to_gen = random.randint(int(base_num_to_gen), int(end_num_to_gen))
         elif base_num_to_gen == None:
             num_to_gen = 1
@@ -44,10 +44,11 @@ def make_subtable_calls(parent, choice_to_expand, tag, state):
         # Since the other clauses could be anywhere, we just back up to the beginning again.
         start = 0
         if tag:
-            start = choice_to_expand.find(tag.symbol)
+            start = choice_to_expand.find(tag.symbol)+len(tag.symbol)
 
         # match = subtable_replace.search(choice_to_expand)
         match = choices_util.get_next_match(choice_to_expand, subtable_replace, start)
+    logging.debug(f'Finished making subtable calls for tag {tag} on {choice_to_expand}.')
     return choice_to_expand, state
 
 def replace_repeated_subtable_clauses(choice_to_expand, subtable_choices, subtable_id):
