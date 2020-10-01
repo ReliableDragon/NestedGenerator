@@ -78,8 +78,7 @@ as the standard call, with the exception that the first parameter is now a range
 For example, '@house_colors[3-5,-1]' would generate between 3 and 5 random house colors, and ensure that each value was unique.
 
 ## Bracket Clauses
-When writing a choice where an element may not be present (such as when randomly repeating a sub-namespace call above), you need a way to remove any text in a choice that may have been associated with the element that was not present. To do this, surround the conditional item that you
-are not sure will be present with curly brackets. ('{' and '}') If the item is not present, everything between the brackets
+When writing a choice where an element may not be present (such as when randomly repeating a sub-namespace call above), you need a way to remove any text in a choice that may have been associated with the element that was not present. To do this, surround the conditional item that you are not sure will be present with curly brackets. ('{' and '}') If the item is not present, everything between the brackets
 will be removed. If it is present, only the brackets themselves will be removed.
 
 For example, if a call to 'First color: @house_colors[1-2,-1].{ Second color: @2house_colors.}' only retrieved one house color value, the result might be, 'First color: Green.' If it retrieved both, the result might be, 'First color: Red. Second color: Purple.'
@@ -87,9 +86,7 @@ For example, if a call to 'First color: @house_colors[1-2,-1].{ Second color: @2
 Bracket clauses are supported for RRSNC, and state interpolations (see below).
 
 ## Multiple Replacement Tokens in a Choice
-It is possible to have multiple replacement tokens ('$') in a single choice. The choices for the first token must be separated from the choices for the
-second token by a '$' with the same level of indentation as the choices. (If you want to draw from the same pool for both, you can put your choices in a
-namespace, and then reference that before and after the '$' separator.
+It is possible to have multiple replacement tokens ('$') in a single choice. The choices for the first token must be separated from the choices for the second token by a '$' with the same level of indentation as the choices. (If you want to draw from the same pool for both, you can put your choices in a namespace, and then reference that before and after the '$' separator.
 
 For example, this is a valid three-replacement config:
 ```
@@ -102,8 +99,7 @@ For example, this is a valid three-replacement config:
 ```
 
 ## Empty Replacement Tokens
-It is valid to have a replacement token with no text, and only a weight. This can be useful to, e.g., randomly choose between adding an extra clause onto a
-choice, or leaving it as is.
+It is valid to have a replacement token with no text, and only a weight. This can be useful to, e.g., randomly choose between adding an extra clause onto a choice, or leaving it as is.
 
 ## Overriding Replacement Order
 Normally, replacements are done starting from the first substitution symbol ('$') and proceeding from left to right. This can be overridden by using
@@ -136,17 +132,16 @@ value modification to be provided, since the value modification is the current c
 
 For example, a choice that writes '50' to the state 'wealth' would be:
 ```
-125 Pile of Gold %wealth:=50
+125 Pile of Gold %wealth:=50%
 ```
 And a choice that increases wealth by 25 (or sets it to 25, if it's unset) would be:
 ```
-125 Pile of Gold %wealth:+=50
+125 Pile of Gold %wealth:+=50%
 ```
 
 ### Using State
 State can be used to modify random number generation or the probabilities of choices. To do this, put a state clause immediately after the
-number you want to modify. These clauses are also placed inside of '%', and consist of an operation, followed by a value modification. In this case,
-the allowed value modifications are integers or other states. The exact format is '%([+=-/*])(\w+)%'. Using state to modify an element must
+number you want to modify. These clauses are also placed inside of '%', and consist of an operation, followed by a value modification. In this case, the allowed value modifications are integers or other states. The exact format is '%([+=-/*])(\w+)%'. Using state to modify an element must
 not have a space before the first '%'.
 
 For example, using state to multiply the output of a random number by 10 would be:
@@ -159,9 +154,7 @@ And a choice that uses state to increase probability by the value of the 'wealth
 ```
 
 ### Conditional State
-State operations (both writing and using) can be made conditional. This involves placing a condition, followed by a '->', before one of the state operations
-shown above. Conditions consist of two items to compare, which can consist of state, integers, and a comparator, which can be one of
-'==', '>=', '>', '<=', '<', or '!='. The exact format is '"?[\w ]+"?[=<>!]+"?[\w ]+"?->'.
+State operations (writing, using, and interpolation) can be made conditional. This involves placing a condition, followed by a '->', before one of the state operations shown above. Conditions permit any boolean expression to be used in them.
 
 For example, a conditional state that assigns the value 20 into the 'wealth' state if the 'nobility' state is equal to 'noble' would be:
 ```
@@ -173,34 +166,38 @@ And a choice that would multiply its probability by the wealth value if the weal
 ```
 
 ### Mathematical Expressions in State Manipulations
-State operations allow for arbitrary mathematical expressions to be used on both sides of a comparison in a conditional state operation, and in the
-effect segment of any state operation. Inside a mathematical expression, expressions are evaluated with floating points, but will be converted to an
-integer by taking the floor before being used.
+State operations allow for arbitrary mathematical expressions to be used on both sides of a comparison in a conditional state operation, and in the effect segment of any state operation. Inside a mathematical expression, expressions are evaluated with floating points, but will be converted to an integer by taking the floor before being used.
 
-For example, the below expression will set the 'invitation' state to the value '"true"' if the sum of the value in the wealth state and ten times
-the value in the magic_items state is greater than 100 times the nobility level:
+For example, the below expression will set the 'invitation' state to the value '"true"' if the sum of the value in the wealth state and ten times the value in the magic_items state is greater than 100 times the nobility level:
 ```
  10 some random choice %(wealth+magic_items*10)>nobility_level*100->invitation:="true"%
 ```
 
 ### Using Strings in State
-Strings are allowed in states, but support fewer operations. They can be stored into states, read from them, and compared for
-equality/inequality. Other operations may work, but are not supported.
+Strings are allowed in states, but support fewer operations. They can be stored into states, read from them, compared for
+equality/inequality, and concatenated.
 
-For example, you could set the 'nobility' state to 'baron', and check against it later on, but there is no ability to see if a string is in a list,
-check if it's a substring of another string, or anything like that.
+For example, you could set the 'nobility' state to 'baron', and check against it later on, but there is no ability to see if a string is in a list, check if it's a substring of another string, or anything like that.
 
 ### String Expressions in State Manipulations
-Strings can be concatenated in expressions with "+". They can be concatenated with other strings, or with states.
+Strings can be concatenated in expressions with "+". This concatenation will work on other quoted strings, states, or the results
+of a sub-expression. In the latter case, the result will be converted to an integer before being concatenated, if it is numeric.
 
 ### Interpolation
-State values can be inserted into a choice by putting the state name, surrounded by percent signs, such as '%my_state%'. The state will then be
-replaced by whatever value is in that state when that clause is evaluated. (For more on evaluation order, see below.) If the state is not present
-when evaluated, the interpolation test will be removed. If there is any choice text associated with the interpolation, you can surround it in a
-bracket clause, as detailed above.
+State values can be inserted into a choice by putting the state name, surrounded by percent signs, such as '%my_state%'. The state will then be replaced by whatever value is in that state when that clause is evaluated. (For more on evaluation order, see below.) If the state is not present when evaluated, the interpolation will be removed. If there is any choice text associated with the interpolation, you can surround it in a bracket clause, as detailed above, and the entire clause within the brackets will be removed if the value is not present.
+
+### Conditional Interpolation
+It's worth an explicit callout that you can apply conditionals to interpolated states, which will cause the entire surrounding bracket clause to be removed if the condition is false. This can be very useful, e.g., it allows you to adjust wording based on a value:
+```
+    10 I have {%children==0%->%no children}{%children>0->children% children}.
+```
 
 ### Storing Tag Results
 It's possible to store the results of a sub-choice into a state by appending a clause of the form '%state_name:@%' after the tag ("$").
+
+### Silent Tags
+You can make a call to a sub-choice without interpolating it into the main choice by surrounding the choice with curly braces. This
+works for both the default form '{$}' and the order-overriden form '{$[1]}'.
 
 ### Execution Order
 Execution occurs from left to right, evaluating each substitution token, subtable call, and random number generation as it is found,
@@ -209,6 +206,9 @@ before proceeding on.
 If the order of substitution tokens is overridden, each token "owns" the text between itself and the next token,
 and that owned text will be evaluated left-to-right for subtable calls and RNG before proceeding on to the next token.
 The text before any tokens will be evaluated first, as if there was a virtual "0th token" at the start of the choice.
+
+### Comments
+Comments are indicated by a '#'. Nothing after the '#' will be processed, so make sure to use them at the end of a line!
 
 ## Examples
 An example file, demonstrating many of these features, is present in test_places.txt. (Note that this test file also tests some code functions, specifically

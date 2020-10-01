@@ -1,98 +1,77 @@
 misc_items
 material_type:material_type.txt
 
-1 a diary (3sp)
+10 $
+  1 whiskey
+  1 gin
+  1 rum
+  1 wine
+  1 fine wine
 
-10 a $dagger (25sp)
-  4
-  1 bloodstained 
+3 bear trap
 
-1 a snowglobe (2gp)
+5 $
+  1 sheet
+  1 mattress
+  1 pillow
+  1 bedframe
+  1 blanket
 
-10 a set of @material_type dinner plates (5sp-15gp)
+5 belt buckle
 
-10 a set of silverware (50cp-3gp)
+2 $
+  10 holy book
+  3 novel
+  2 book of history
+  10 bureaucratic tome
+  5 poetry book
+  1 book of gnostic mysteries
 
-5 a(n) $ (5sp-50gp)
-  1 guitar
-  1 lute
-  1 flute
-  1 accordion
-  1 piano
-  1 violin
-  1 drum
-  1 pipes
-
-7 bunch of candles (15cp)
-
-2 wig (25sp)
-
-4 painting of a(n) $ (2gp)
-  1 sunset
-  1 beach
-  1 waterfall
-  1 castle
-  1 river valley
-  1 pastoral landscape
-  1 ship at sea
-
-5 sewing needle (1cp)
-
-5 thread (1cp per 10 yards)
-
-5 belt buckle (5sp)
-
-7 @material_type ring (50sp-25gp)
-
-3 $ scroll (25sp-1gp)
-  3 magic missile
-  5 sending
-  10 prestidigitation
-  10 light
-
-1 wand of $ (1gp-10gp)
-  1 light
-  1 prestidigitation
-
-7 flask (20sp)
-
-10 glass bottles filled with $ (2sp-5gp each)
+10 glass bottle filled with $
   10 nothing
   1 holy water
   3 unidentified potion
-  1 healing potion (allegedly)
+  1 healing potion
   7 obvious poison
   4 mysterious alchemic liquid
 
-5 lantern (5sp)
+5 brush
 
-5 heirloom $ (5gp-20gp)
-  1 sword
-  1 spear
-  1 bow
-  1 crossbow
+7 bunch of candles
 
-3 rope (25cp per 100ft)
+5 bust of a $
+  1 king
+  1 founder
+  1 famous general
+  1 religious figure
 
-2 $ (5gp-50gp)
-  10 holy book
-  3 novel
-  2 history
-  10 bureaucratic
-  5 poetry
-  1 gnosticism
+5 @material_type chest
 
-5 statuette (25cp-50gp)
+2 clock
 
-1 crystal ball (25gp)
+10 cloth
+
+5 @material_type $
+  1 pot
+  1 pan
+
+1 crystal ball
 
 10 a set of @material_type cups
 
-3 bear trap (5gp)
+10 a $dagger
+  4
+  1 bloodstained
 
-5 doll (15cp-2gp)
+1 a diary
 
-10 $ (50sp-500gp)
+10 a set of @material_type dinner plates
+
+5 doll
+
+7 flask
+
+10 $
   10 chair
   10 table
   10 bench
@@ -104,49 +83,7 @@ material_type:material_type.txt
   10 cupboard
   1 bookcase
 
-10 lamp (3sp-2gp)
-
-5 @material_type $ (25cp-1gp)
-  1 pot
-  1 pan
-
-6 tinderbox (3sp)
-
-10 knapsack (50cp)
-
-5 @material_type chest (5sp-500gp)
-
-10 cloth (10sp per yard)
-
-5 $ (10cp-1gp)
-  1 sheets
-  1 mattress
-  1 pillow
-  1 bedframe
-  1 blankets
-
-7 rug (75sp)
-
-3 shaving razor (40sp)
-
-2 watch (1gp-1,000gp)
-
-2 clock (10gp-10,000gp)
-
-5 ink (1gp per bottle)
-
-5 brushes (5sp)
-
-10 paper (4cp per sheet)
-
-10 $ (20sp-2gp)
-  1 saw
-  1 hammer
-  1 chisel
-  1 sledgehammer
-  1 axe
-
-1 a $ (50gp-1,000gp)
+1 a $
   10 sapphire
   7 emerald
   5 ruby
@@ -154,41 +91,108 @@ material_type:material_type.txt
   8 topaz
   3 opal
 
-5 toy soldiers (20sp for a battalion of 10)
+5 heirloom $
+  1 sword
+  1 spear
+  1 bow
+  1 crossbow
 
-3 elixirs of $ (10gp-50gp)
-  1 fireproofing
-  1 glue
-  1 cooling
-  1 light
-  1 fumigation
+5 ink
 
-10 $ (50cp-5gp)
-  1 whiskey
-  1 gin
-  1 rum
-  1 wine
-  1 fine wine
+10 knapsack
 
-3 model ship (80sp)
+10 lamp
 
-7 sculpted paperweight in the form of a $ (40sp-1gp 50sp)
-  1 man
-  1 ship
-  1 castle
-  1 dragon
+5 lantern
 
-5 bust of a $ (55sp-2gp50sp)
-  1 king
-  1 founder
-  1 famous general
-  1 religious figure
-
-5 $ (5cp-10sp)
+5 $
   1 rabbit’s foot
   1 horseshoe
   1 silver cat talisman
   1 vial full of ladybugs
   1 garlic wreath
 
-2 mirror (50gp)
+2 mirror
+
+3 model ship
+
+5 a(n) $
+  1 guitar
+  1 lute
+  1 flute
+  1 accordion
+  1 piano
+  1 violin
+  1 drum
+  1 pipes
+
+4 painting of a(n) $
+  1 sunset
+  1 beach
+  1 waterfall
+  1 castle
+  1 river valley
+  1 pastoral landscape
+  1 ship at sea
+
+10 paper
+
+7 paperweight in the form of a $
+  1 man
+  1 ship
+  1 castle
+  1 dragon
+
+3 elixirs of $
+  1 fireproofing
+  1 glue
+  1 cooling
+  1 light
+  1 fumigation
+
+5 purse
+
+3 shaving razor
+
+7 @material_type ring
+
+3 rope
+
+7 rug
+
+3 $ scroll
+  3 magic missile
+  5 sending
+  10 prestidigitation
+  10 light
+
+5 sewing needle
+
+10 a set of silverware
+
+1 a snowglobe
+
+5 statuette
+
+1 spyglass
+
+5 thread
+
+6 tinderbox
+
+10 $
+  1 saw
+  1 hammer
+  1 chisel
+  1 sledgehammer
+  1 axe
+
+5 toy soldiers
+
+1 wand of $
+  1 light
+  1 prestidigitation
+
+2 watch
+
+2 wig

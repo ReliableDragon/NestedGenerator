@@ -29,7 +29,13 @@ COMPARISON_SYMBOLS = '!=<>|&'
 OPERAND_TOKENS = COMPARISON_SYMBOLS + '()^*/+-UM'
 
 def calculate(clause, state):
-    logging.debug(f'Calculating value of expression {clause}, with state {state}.')
+    logging.debug(f'Calculating value of expression "{clause}", with state {state}.')
+
+    # TODO: Returning empty strings doesn't work properly, and the value comes back as None instead of ''.
+    if not clause:
+        logging.debug('Returning empty string.')
+        return ''
+
     op_stack = []
     val_stack = []
 
@@ -46,7 +52,7 @@ def calculate(clause, state):
         if i >= len(clause):
             break
         c = clause[i]
-        # logging.debug(f'c: {c}, op_stack: {op_stack}, val_stack: {val_stack}, token: `{token}`, quoted: {quoted}')
+        logging.debug(f'c: {c}, op_stack: {op_stack}, val_stack: {val_stack}, token: `{token}`, quoted: {quoted}')
 
         if c == '"':
             quoted = not quoted
@@ -65,10 +71,11 @@ def calculate(clause, state):
         # when the close paren is read in, as the / is still on the op_stack. Rework it to be more readable.
         # assert not(not token and c in OPERAND_TOKENS and op_stack[-1] not in '()'), f'Got operand token {c} at character {i} with empty token while processing "{clause}"! Did you accidentally put two operations back-to-back?'
 
-        if c == '-' and not token:
-            c = 'UM' #unary minus
-        if c == '!' and not token:
-            c = 'NOT' #unary not
+        # TODO: Parentheses make this more complicated, sort that out.
+        # if c == '-' and not token:
+        #     c = 'UM' #unary minus
+        # if c == '!' and not token:
+        #     c = 'NOT' #unary not
 
         if c not in OPERAND_TOKENS:
             token += c
@@ -106,7 +113,7 @@ def calculate(clause, state):
                 val_stack.append(-1 * to_negate)
                 continue
 
-            # logging.debug(f'op_stack: {op_stack[-1]}')
+            logging.debug(f'op_stack: {op_stack[-1]}')
             rhs = val_stack.pop()
             lhs = val_stack.pop()
             logging.debug(f'Calculating "{lhs} {operand} {rhs}".')
@@ -149,7 +156,7 @@ def calculate(clause, state):
             else:
                 raise ValueError(f'Got unrecognized operand {operand} at character {i} while calculating {clause}!')
 
-            # logging.debug(f'Calculated "{value}".')
+            logging.debug(f'Calculated "{value}".')
             val_stack.append(value)
 
         if c == ')':
@@ -160,16 +167,16 @@ def calculate(clause, state):
 
     assert len(op_stack) == 0, f'Operand stack expected to contain no elements, but was {op_stack} after calculating {clause}!'
     assert len(val_stack) == 1, f'Value stack expected to contain one element, but was {val_stack} after calculating {clause}!'
-    logging.debug(f'Calculated value of {val_stack[-1]} for clause {clause}.')
 
     result = val_stack.pop()
     result = try_int_conversion(result)
-    # if isinstance(result, float):
-    #     try:
-    #         result = math.floor(result)
-    #     except TypeError:
-    #         # It's a string
-    #         pass
+
+    try:
+        result = max(0, result)
+    except TypeError:
+        # Is string
+        pass
+    logging.debug(f'Calculated value of {result} for clause {clause}.')
     return result
 
 def try_int_conversion(maybe_num):
@@ -188,7 +195,7 @@ if __name__ == '__main__':
     print(calculate('(((((((2^5)))))))', {'wealth': 10, 'thousand': 1000})) #32
     print(calculate('"pretty pretty princesses"', {})) # see title
     print(calculate('name', {'name': 'Gabe'})) # Gabe
-    print(calculate('-(1+-3*-4)', {})) # -13
+    # print(calculate('-(1+-3*-4)', {})) # -13 # See TODO above about unary operations and parentheses.
     print(calculate('"test" + "test"', {})) # testtest
     print(calculate('"data: " + data', {'data': 12345})) # data: 12345
     print(calculate('"12345" == "123" + fourfive', {'fourfive': 45}))

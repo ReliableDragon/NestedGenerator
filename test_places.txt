@@ -32,5 +32,5 @@ test_places
         1 UK %country:@%
   1 NorCal %wildfires:="also bad"%
   $
-  10 , The World{ (Home of the %nthcali% $!)}
+  10 , %world:="Earth"% The World{ (%world%)}{ (Home of the %nthcali% $!)}
     10 San Diego, with %wildfires% wildfires!

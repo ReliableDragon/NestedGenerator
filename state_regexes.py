@@ -1,8 +1,10 @@
+import set_up_logging
+
 SPECIAL_CHARS = '[ \(\)]'
 STATE_RE = '(?:[a-zA-Z]\w+)'
 QUOTED_STRING = '(?:"[^%]+?")'
 FULL_OPERATORS = '(?:\*|\+|\-|/|\^|&&|\|\|)'
-FULL_VALUES = f'(?:{QUOTED_STRING}|\-?{STATE_RE}|\-?\d+)'
+FULL_VALUES = f'(?:{QUOTED_STRING}|\-?{STATE_RE}|\-?\d+)?'
 FULL_OPERATIONS = f'(?:{SPECIAL_CHARS}*{FULL_VALUES}{SPECIAL_CHARS}*{FULL_OPERATORS})*{SPECIAL_CHARS}*{FULL_VALUES}{SPECIAL_CHARS}*'
 FULL_COMPARATORS = '(?:==|!=|>=|<=|>|<)'
 FULL_COMPARISON = f'((?:{SPECIAL_CHARS}*{FULL_OPERATIONS}{SPECIAL_CHARS}*{FULL_COMPARATORS})*{SPECIAL_CHARS}*{FULL_OPERATIONS}{SPECIAL_CHARS}*)'
@@ -32,3 +34,12 @@ STATE_REGEXES = {
     'plain_state_interpolation': f'%(?:{FULL_COMPARISON}->)?({STATE_RE})%',
     'tag_state': f'%({STATE_RE}):({CURRENT_VALUE_RE})%'
 }
+
+
+if __name__ == '__main__':
+    args = set_up_logging.set_up_logging(['--dump_regexes'])
+
+    if args.dump_regexes:
+        for type, regex in STATE_REGEXES.items():
+            print(f'{type} regex: "{regex}"')
+        exit()

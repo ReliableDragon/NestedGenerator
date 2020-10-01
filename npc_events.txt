@@ -99,23 +99,6 @@ generic_shops:generic_shops.txt
   20 the Corela
   20 the town guard
 
-100 When they were a child, they $
-  100 were abandoned $
-    100 in the woods and $
-      100 raised by a $ who found them
-        100 farmer
-        100 woodcutter
-        100 hunter
-        10 pack of wolves
-      25 had to learn to fend for themselves
-    100 by their parents, and $
-      100 grew up as an orphan on the streets
-      100 were taken in by $
-        100 a group of monks
-        10 a minor nobleman
-        100 a kindly $
-          100 @generic_shops owner
-
 100 They have a weakness for $
   100 alcohol, and their drink of choice is $
     100 beer

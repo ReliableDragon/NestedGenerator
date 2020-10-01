@@ -1,0 +1,40 @@
+childhoods
+country_places:country_places.txt
+generic_shops:generic_shops.txt
+
+10 They grew up in $, until eventually $
+  10 the big city, where their parents owned a @generic_shops %home:="city"%
+  5 a small village, where their parents owned a $ %home:="village"%
+    10 mill
+    10 general store
+    10 tanner
+    10 lumber mill
+    10 inn
+  2 the countryside, where their parents livelihood consisted of a @country_places %home:="country"%
+  $
+  10 they moved to the city for an apprenticeship
+  10 their family moved to the city to escape $
+    10 a famine
+    10 a drought
+    10 an invasion
+    10 poverty
+  5 they joined the army, and ended up staying in the city even after they left
+  5 they met someone from the city at a market, and moved there to be with them
+  1 they ran away from home, and eventually ended up in the city
+
+1 When they were a child, they $
+  100 were abandoned $
+    100 in the woods and $
+      100 raised by a $ who found them
+        100 farmer
+        100 woodcutter
+        100 hunter
+        10 pack of wolves
+      25 had to learn to fend for themselves
+    100 by their parents, and $
+      100 grew up as an orphan on the streets
+      100 were taken in by $
+        100 a group of monks
+        10 a minor nobleman
+        100 a kindly $
+          100 @generic_shops owner

@@ -1,0 +1,28 @@
+antique_reasons
+
+10 it was given to them by their $
+  0%children>0->=10% child
+  10 father
+  10 mother
+  5 grandfather
+  5 grandmother
+  5 sweetheart
+  2 great-grandfather
+  2 great-grandmother
+  1 distant ancestor
+
+10 they found it $
+  10 fighting in a war
+  10 when they were a young child
+  10 while having a religious experience
+  10 traveling abroad
+  10 in a mysterious forest glade
+
+10 they had it made specially to commemorate $
+  10 the birth of their child
+  10 their marriage
+  10 the death of their $
+    10 child
+    10 mother
+    10 father
+  10 a narrow escape from death

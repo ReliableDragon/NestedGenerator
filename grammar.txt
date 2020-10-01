@@ -1,0 +1,85 @@
+choices_file = id "\n" *import 1*("\n\n" top_level_choice)
+
+id = ALPHA *(ALPHA / DIGIT / "_")
+
+import = id ":" filename
+
+filename = *CHAR
+
+
+
+top_level_choice = choice_line
+
+choice_line = choice_weight choice_segment UNREGISTER_SUBTABLE_CALLS
+
+choice_weight = 1*DIGIT [value_modifications] ; TODO: Let conditions reference value being modified with @.
+
+choice_segment = *(" " choice_clause) SUBCHOICES
+
+; choice_segment = ([choice_clause] "\n") / ([choice_clause] tag repeated_choice_segment "\n" subchoice)
+
+; repeated_choice_segment = ([choice_clause] "\n") / ([choice_clause] tag repeated_choice_segment "\n$\n" subchoice)
+
+; Not context-free, no ABNF representation possible
+subchoice = INDENT choice_line DEDENT
+
+
+; TODO: Figure out how to handle spaces.
+; TODO: Add arbitrary bracket clauses, with conditions:  `state_condition "{" 1*choice_clause "}" /`
+; TODO: Determine if we should evaluate the condition for arbitrary bracket clauses before or after they are evaluated.
+choice_clause = subtable_call / state_modification / rng / *CHAR / tag ADD_SUBCHOICE / repeated_subtable_call_clause / interpolation_phrase
+                
+subtable_call = "@" id ["[" 1*DIGIT "," 1*DIGIT "]"] [state_store_result] REGISTER_SUBTABLE_CALL
+
+repeated_subtable_call_clause = "{" *choice_clause repeated_subtable_call *choice_clause "}" / repeated_subtable_call
+
+repeated_subtable_call = "@" 1*DIGIT id [state_store_result]
+
+rng  = "[" range ["," ("N" / "G")] [id] "]"
+
+range = 1*DIGIT "-" 1*DIGIT
+
+tag = base_tag / silent_tag [state_store_result]
+
+silent_tag = "{" base_tag "}"
+
+base_tag = "$" ["[" 1*DIGIT "]"]
+
+interpolation_phrase = "{" *choice_clause interpolation__call *choice_clause "}" / interpolation__call
+
+
+state_modification = " %" [condition "->"] id ":" condition "%"
+state_store_result = "%" [condition "->"] id ":@%"
+value_modifications = "%" value_modification 1*("%" value_modification) "%"
+value_modification = [modification_condition "->"] modification_calculation
+
+
+
+evaluation = condition / evaluation comparator evaluation / "(" evaluation ")"
+condition = calculation / condition boolean_operator condition / "(" condition ")" 
+calculation = value / calculation operand calculation / "(" calculation ")"
+
+modification_evaluation = modification_condition / modification_evaluation comparator modification_evaluation / "(" modification_evaluation ")"
+modification_condition = modification_calculation / modification_condition boolean_operator modification_condition / "(" modification_condition ")" 
+modification_calculation = modification_value / modification_calculation operand modification_calculation / "(" modification_calculation ")"
+modification_value = ("\"" *CHAR "\"") / 1*DIGIT / id / "@"
+
+comparator = "==" / "!=" / ">=" / "<=" / ">" / "<" / " in "
+boolean_operators = "&&" / "||"
+operand = "+" / "*" / "-" / "/" / "^"
+value = ("\"" *CHAR "\"") / 1*DIGIT / id
+
+
+
+
+{a tag b}
+{a tag}
+{b tag}
+
+
+
+
+
+
+
+

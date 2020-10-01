@@ -149,12 +149,12 @@ def evaluate_value_modification(condition, target, state):
     value_modification = re.fullmatch(STATE_REGEXES['value_modification'], condition)
     conditional_value_modification = re.fullmatch(STATE_REGEXES['conditional_value_modification'], condition)
 
-    if value_modification:
-        # logging.info('got value_modification')
-        return handler.process_value_modification(value_modification)
-    elif conditional_value_modification:
+    if conditional_value_modification:
         # logging.info('got conditional_value_modification')
         return handler.process_conditional_value_modification(conditional_value_modification)
+    elif value_modification:
+        # logging.info('got value_modification')
+        return handler.process_value_modification(value_modification)
     else:
         raise ValueError(f'condition "{condition}" passed to evaluate_value_modification was not of a value modification form!')
 
@@ -166,19 +166,19 @@ def evaluate_state_modification(condition, choice_value, state):
     state_modification = re.fullmatch(STATE_REGEXES['state_modification'], condition)
     conditional_state_modification = re.fullmatch(STATE_REGEXES['conditional_state_modification'], condition)
 
-    if state_modification:
-        # logging.info('got state_modification')
-        value = handler.process_state_modification(state_modification)
-        return handler.target_state, value
-    elif conditional_state_modification:
+    if conditional_state_modification:
         # logging.info('got conditional_state_modification')
         value = handler.process_conditional_state_modification(conditional_state_modification)
+        return handler.target_state, value
+    elif state_modification:
+        # logging.info('got state_modification')
+        value = handler.process_state_modification(state_modification)
         return handler.target_state, value
     else:
         raise ValueError(f'condition "{condition}" passed to evaluate_state_modification was not of a state modification form!')
 
 def evaluate_state_interpolation(condition, state):
-    # logging.debug(f'Calculating interpolation value for "{condition}".')
+    logging.debug(f'Calculating interpolation value for "{condition}".')
     handler = StateClauseHandler()
     handler.condition = condition
     handler.state = state
@@ -189,17 +189,18 @@ def evaluate_state_interpolation(condition, state):
     if plain_state_interpolation:
         # If we get a stand-alone state, we only display it if it's present in the dictionary.
         # We don't display default values for these.
+        logging.debug('got plain_state_interpolation')
         state_name = plain_state_interpolation.group(2)
         if state_name not in state.keys():
             return None
 
-    if state_interpolation:
-        # logging.info('got state_interpolation')
-        value = handler.process_state_interpolation(state_interpolation)
-        return value
-    elif conditional_state_interpolation:
-        # logging.info('got conditional_state_interpolation')
+    if conditional_state_interpolation:
+        logging.debug('got conditional_state_interpolation')
         value = handler.process_conditional_state_interpolation(conditional_state_interpolation)
+        return value
+    elif state_interpolation:
+        logging.debug('got state_interpolation')
+        value = handler.process_state_interpolation(state_interpolation)
         return value
     else:
         raise ValueError(f'condition "{condition}" passed to evaluate_state_interpolation was not of a state interpolation form!')
