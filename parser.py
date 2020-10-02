@@ -3,9 +3,27 @@ import re
 
 import set_up_logging
 
-def parse_from_string(choice_string):
-    pass
 
+class ParseTree():
+
+    def __init__(self, id_):
+        self.id = id_
+        self.
+
+def parse_from_string(choice_string):
+    lines = choice_string.split('\n')
+
+    # Drop empty lines and comments
+    lines = [line.strip().split(';')[0] in lines if line.strip()]
+
+    for line in lines:
+        rulename, elements = line.split('=')
+        rulename = rulename.strip()
+        parse_elements()
+
+
+def parse_elements():
+    pass
 
 if __name__ == '__main__':
     args = set_up_logging.set_up_logging(['--dump_regexes'])
