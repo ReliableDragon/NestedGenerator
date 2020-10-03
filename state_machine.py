@@ -101,9 +101,11 @@ class StateMachine():
     def register_automata(self, automata):
         self.nested_automata[automata.id] = automata
 
-    # Returns found_bool
+    # Checks if the entire string is accepted by the machine. Should not be called
+    # after accepts_partial.
+    # Returns (found: bool, path: list(StateRecord)
     def accepts(self, string):
-        return self._accepts(string, partial_match=False)[0]
+        return self._accepts(string, partial_match=False)[0:1]
 
     # Returns (found: bool, path: list(StateRecord), end_pos: int)
     def accepts_partial(self, string, start=0):

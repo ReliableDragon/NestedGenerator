@@ -20,7 +20,7 @@ class SimpleMachinesTestCase(unittest.TestCase):
     # For accepting raw tokens
     def test_accepts_single_symbol(self):
         machine = StateMachine(states=[State(START_STATE, Edge('abc', FINAL_STATE)), State(FINAL_STATE)])
-        self.assertTrue(machine.accepts('abc'))
+        self.assertTrue(machine.accepts('abc')[0])
 
     # For accepting [optional] tokens
     def test_accepts_repeated_symbols(self):
@@ -29,20 +29,20 @@ class SimpleMachinesTestCase(unittest.TestCase):
                         State(START_STATE, Edge('a', FINAL_STATE), Edge('a', 'b')),
                         State('b', Edge('b', FINAL_STATE)),
                         State(FINAL_STATE)])
-        self.assertTrue(machine.accepts('a'))
+        self.assertTrue(machine.accepts('a')[0])
         machine.reset()
-        self.assertTrue(machine.accepts('ab'))
+        self.assertTrue(machine.accepts('ab')[0])
         machine.reset()
-        self.assertFalse(machine.accepts('b'))
+        self.assertFalse(machine.accepts('b')[0])
 
     # For accepting repeated tokens
     def test_accepts_repeated_symbols(self):
         machine = StateMachine(states=[State(START_STATE, Edge('a', FINAL_STATE)), State(FINAL_STATE, Edge('', START_STATE))])
-        self.assertTrue(machine.accepts('a'))
+        self.assertTrue(machine.accepts('a')[0])
         machine.reset()
-        self.assertTrue(machine.accepts('aa'))
+        self.assertTrue(machine.accepts('aa')[0])
         machine.reset()
-        self.assertTrue(machine.accepts('aaa'))
+        self.assertTrue(machine.accepts('aaa')[0])
 
     # For accepting N repeated tokens
     def test_accepts_N_repeated_symbols(self):
@@ -52,11 +52,11 @@ class SimpleMachinesTestCase(unittest.TestCase):
                         State('a1', Edge('a', FINAL_STATE)),
                         State(FINAL_STATE)
                 ])
-        self.assertFalse(machine.accepts('a'))
+        self.assertFalse(machine.accepts('a')[0])
         machine.reset()
-        self.assertTrue(machine.accepts('aa'))
+        self.assertTrue(machine.accepts('aa')[0])
         machine.reset()
-        self.assertFalse(machine.accepts('aaa'))
+        self.assertFalse(machine.accepts('aaa')[0])
 
     # For accepting N* repeated tokens
     def test_accepts_N_star_repeated_symbols(self):
@@ -67,13 +67,13 @@ class SimpleMachinesTestCase(unittest.TestCase):
                         State('a2', [Edge('a', FINAL_STATE), Edge('a', 'a2')]),
                         State(FINAL_STATE),
                         ])
-        self.assertFalse(machine.accepts('a'))
+        self.assertFalse(machine.accepts('a')[0])
         machine.reset()
-        self.assertFalse(machine.accepts('aa'))
+        self.assertFalse(machine.accepts('aa')[0])
         machine.reset()
-        self.assertTrue(machine.accepts('aaa'))
+        self.assertTrue(machine.accepts('aaa')[0])
         machine.reset()
-        self.assertTrue(machine.accepts('aaaa'))
+        self.assertTrue(machine.accepts('aaaa')[0])
 
     # For accepting *N repeated tokens
     def test_accepts_star_N_repeated_symbols(self):
@@ -84,13 +84,13 @@ class SimpleMachinesTestCase(unittest.TestCase):
                         State('a2', Edge('a', FINAL_STATE)),
                         State(FINAL_STATE)
                         ])
-        self.assertTrue(machine.accepts('a'))
+        self.assertTrue(machine.accepts('a')[0])
         machine.reset()
-        self.assertTrue(machine.accepts('aa'))
+        self.assertTrue(machine.accepts('aa')[0])
         machine.reset()
-        self.assertTrue(machine.accepts('aaa'))
+        self.assertTrue(machine.accepts('aaa')[0])
         machine.reset()
-        self.assertFalse(machine.accepts('aaaa'))
+        self.assertFalse(machine.accepts('aaaa')[0])
 
     # For accepting A / B tokens
     def test_accepts_both_optional_paths(self):
@@ -101,9 +101,9 @@ class SimpleMachinesTestCase(unittest.TestCase):
                         State('c', Edge('c', FINAL_STATE)),
                         State(FINAL_STATE)
                 ])
-        self.assertTrue(machine.accepts('ab'))
+        self.assertTrue(machine.accepts('ab')[0])
         machine.reset()
-        self.assertTrue(machine.accepts('ac'))
+        self.assertTrue(machine.accepts('ac')[0])
 
 class ContinuationTestCases(unittest.TestCase):
     # For allowing repeated calls to sub-automata
@@ -279,40 +279,40 @@ class AStarBRepeatedStateMachineTestCase(unittest.TestCase):
         self.machine = StateMachine(states=[state_0, state_1, state_2])
 
     def test_accepts_empty_string(self):
-        self.assertTrue(self.machine.accepts(""))
+        self.assertTrue(self.machine.accepts("")[0])
 
     def test_does_not_accept_a(self):
-        self.assertFalse(self.machine.accepts("a"))
+        self.assertFalse(self.machine.accepts("a")[0])
 
     def test_does_not_accept_b(self):
-        self.assertFalse(self.machine.accepts("b"))
+        self.assertFalse(self.machine.accepts("b")[0])
 
     def test_does_not_accept_c(self):
-        self.assertFalse(self.machine.accepts("c"))
+        self.assertFalse(self.machine.accepts("c")[0])
 
     def test_accepts_ab(self):
-        self.assertTrue(self.machine.accepts("ab"))
+        self.assertTrue(self.machine.accepts("ab")[0])
 
     def test_does_not_accept_ba(self):
-        self.assertFalse(self.machine.accepts("ba"))
+        self.assertFalse(self.machine.accepts("ba")[0])
 
     def test_does_not_accept_abc(self):
-        self.assertFalse(self.machine.accepts("abc"))
+        self.assertFalse(self.machine.accepts("abc")[0])
 
     def test_does_not_accept_aaa(self):
-        self.assertFalse(self.machine.accepts("aaa"))
+        self.assertFalse(self.machine.accepts("aaa")[0])
 
     def test_does_not_accept_bbb(self):
-        self.assertFalse(self.machine.accepts("bbb"))
+        self.assertFalse(self.machine.accepts("bbb")[0])
 
     def test_accepts_aaabaaab(self):
-        self.assertTrue(self.machine.accepts("aaaaaaab"))
+        self.assertTrue(self.machine.accepts("aaaaaaab")[0])
 
     def test_accepts_aaabaaab(self):
-        self.assertTrue(self.machine.accepts("aaabaaab"))
+        self.assertTrue(self.machine.accepts("aaabaaab")[0])
 
     def test_does_not_accept_aaabbaaab(self):
-        self.assertFalse(self.machine.accepts("aaabbaaab"))
+        self.assertFalse(self.machine.accepts("aaabbaaab")[0])
 
 class AorBCorDEFFiveTimesStateMachineTestCase(unittest.TestCase):
 
@@ -335,49 +335,49 @@ class AorBCorDEFFiveTimesStateMachineTestCase(unittest.TestCase):
         self.machine = StateMachine(states=states)
 
     def test_does_not_accept_empty_string(self):
-        self.assertFalse(self.machine.accepts(""))
+        self.assertFalse(self.machine.accepts("")[0])
 
     def test_does_not_accept_a(self):
-        self.assertFalse(self.machine.accepts("a"))
+        self.assertFalse(self.machine.accepts("a")[0])
 
     def test_does_not_accept_b(self):
-        self.assertFalse(self.machine.accepts("b"))
+        self.assertFalse(self.machine.accepts("b")[0])
 
     def test_does_not_accept_bc(self):
-        self.assertFalse(self.machine.accepts("bc"))
+        self.assertFalse(self.machine.accepts("bc")[0])
 
     def test_does_not_accept_c(self):
-        self.assertFalse(self.machine.accepts("c"))
+        self.assertFalse(self.machine.accepts("c")[0])
 
     def test_does_not_accept_cd(self):
-        self.assertFalse(self.machine.accepts("cd"))
+        self.assertFalse(self.machine.accepts("cd")[0])
 
     def test_does_not_accept_cde(self):
-        self.assertFalse(self.machine.accepts("cde"))
+        self.assertFalse(self.machine.accepts("cde")[0])
 
     def test_accepts_abcdefabc(self):
-        self.assertTrue(self.machine.accepts("abcdefabc"))
+        self.assertTrue(self.machine.accepts("abcdefabc")[0])
 
     def test_does_not_accept_aaaa(self):
-        self.assertFalse(self.machine.accepts("aaaa"))
+        self.assertFalse(self.machine.accepts("aaaa")[0])
 
     def test_accepts_aaaaa(self):
-        self.assertTrue(self.machine.accepts("aaaaa"))
+        self.assertTrue(self.machine.accepts("aaaaa")[0])
 
     def test_does_not_accept_aaaaaa(self):
-        self.assertFalse(self.machine.accepts("aaaaaa"))
+        self.assertFalse(self.machine.accepts("aaaaaa")[0])
 
     def test_does_not_accept_cdecdecdecde(self):
-        self.assertFalse(self.machine.accepts("cdecdecdecde"))
+        self.assertFalse(self.machine.accepts("cdecdecdecde")[0])
 
     def test_accepts_cdecdecdecdecde(self):
-        self.assertFalse(self.machine.accepts("cdecdecdecdecde"))
+        self.assertFalse(self.machine.accepts("cdecdecdecdecde")[0])
 
     def test_does_not_accept_cdecdecdecde(self):
-        self.assertFalse(self.machine.accepts("cdecdecdecdecdecde"))
+        self.assertFalse(self.machine.accepts("cdecdecdecdecdecde")[0])
 
     def test_accepts_defabcaa(self):
-        self.assertTrue(self.machine.accepts("defabcaa"))
+        self.assertTrue(self.machine.accepts("defabcaa")[0])
 
 if __name__ == '__main__':
     unittest.main()
