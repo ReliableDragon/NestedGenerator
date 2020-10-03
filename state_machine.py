@@ -1,5 +1,6 @@
 import logging
 import set_up_logging
+import string as string_module
 
 from collections import defaultdict
 
@@ -9,17 +10,42 @@ START_STATE = "START"
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+CHARACTER_CATEGORIES = {
+    'CHAR': {'CHAR contains literally everything, this is handled specially'},
+    'ALPHA': {c for c in string_module.ascii_lowercase + string_module.ascii_uppercase},
+    'DIGIT': {c for c in string_module.digits}
+}
+
 class Edge():
 
-    def __init__(self, input, dest):
+    def __init__(self, input, dest, is_character_class=False):
         self.input = input
         self.dest = dest
+        self.is_character_class = is_character_class
 
     def __str__(self):
-        return f'{{Edge | input: "{self.input}", dest: {self.dest}}}'
+        val = f'{{Edge'
+        if self.is_character_class:
+            val += ' (character class)'
+        val += f' | input: "{self.input}", dest: {self.dest}}}'
+        return val
 
     def __repr__(self):
         return self.__str__()
+
+    def get_input_length(self):
+        if not self.is_character_class:
+            return len(self.input)
+        else:
+            return 1
+
+    def character_matches_category(self, c):
+        assert self.is_character_class, f'character_matches_category() was called on {self}, which is not a character_class edge!'
+        if self.input == 'CHAR':
+            return True
+        if c in CHARACTER_CATEGORIES[self.input]:
+            return True
+        return False
 
 # START_STATE and FINAL_STATE may not have is_automata set to True.
 class State():
@@ -32,10 +58,15 @@ class State():
         for edge in edges:
             assert isinstance(edge, Edge), f'State {id_} got edge {edge} that was not an instance of class Edge!'
         self.edges = edges
+        assert isinstance(is_automata, bool), f'Got is_automata value of {is_automata}, which was not a boolean! Perhaps a second edge you forgot to put into a list?'
         self.is_automata = is_automata
 
     def __str__(self):
-        return f'{{State {"(sub-automata) " if self.is_automata else ""}| {self.id}: {[str(edge) for edge in self.edges]}}}'
+        val = f'{{State '
+        if self.is_automata:
+            val += '(sub-automata) '
+        val += f'| {self.id}: {[str(edge) for edge in self.edges]}}}'
+        return val
 
     def __repr__(self):
         return self.__str__()
@@ -170,11 +201,11 @@ class StateMachine():
             for edge in state.edges:
                 # Make a copy
                 path = list(prev_path)
-                input_length = len(edge.input)
+                input_length = edge.get_input_length()
                 match_end = i + input_length
                 self.debug(f'Evaluating edge: {edge}')
 
-                if string_path_edge_input(string, i, edge):
+                if string_matches_edge_input(string, i, edge):
                     self.debug(f'Matched: "{string[i:match_end]}" at position {i} in "{string}"')
 
                     path_step = StateRecord(self.id, state_id, i, match_end)
@@ -198,8 +229,16 @@ class StateMachine():
                 break
         return False, None, -1
 
-def string_path_edge_input(string, i, edge):
-    return edge.input == '' or (i <= len(string) - len(edge.input) and edge.input == string[i:i+len(edge.input)])
+def string_matches_edge_input(string, i, edge):
+    if edge.input == '':
+        return True
+    elif edge.is_character_class:
+        if i <= len(string) - 1 and edge.character_matches_category(string[i]):
+            return True
+    elif i <= len(string) - len(edge.input) and edge.input == string[i:i+len(edge.input)]:
+        return True
+    else:
+        return False
 
 
 if __name__ == '__main__':

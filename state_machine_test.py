@@ -23,10 +23,10 @@ class SimpleMachinesTestCase(unittest.TestCase):
         self.assertTrue(machine.accepts('abc')[0])
 
     # For accepting [optional] tokens
-    def test_accepts_repeated_symbols(self):
+    def test_accepts_optional_symbols(self):
         machine = StateMachine(
                 states=[
-                        State(START_STATE, Edge('a', FINAL_STATE), Edge('a', 'b')),
+                        State(START_STATE, [Edge('a', FINAL_STATE), Edge('a', 'b')]),
                         State('b', Edge('b', FINAL_STATE)),
                         State(FINAL_STATE)])
         self.assertTrue(machine.accepts('a')[0])
@@ -104,6 +104,117 @@ class SimpleMachinesTestCase(unittest.TestCase):
         self.assertTrue(machine.accepts('ab')[0])
         machine.reset()
         self.assertTrue(machine.accepts('ac')[0])
+
+class CharacterClassesTestCase(unittest.TestCase):
+
+    # For accepting raw tokens
+    def test_accepts_single_digit(self):
+        machine = StateMachine(states=[State(START_STATE, Edge('DIGIT', FINAL_STATE, True)), State(FINAL_STATE)])
+        self.assertTrue(machine.accepts('1')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('2')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('3')[0])
+        machine.reset()
+        self.assertFalse(machine.accepts('A')[0])
+        machine.reset()
+        self.assertFalse(machine.accepts('a')[0])
+
+    # For accepting raw tokens
+    def test_accepts_single_alpha(self):
+        machine = StateMachine(states=[State(START_STATE, Edge('ALPHA', FINAL_STATE, True)), State(FINAL_STATE)])
+        self.assertTrue(machine.accepts('a')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('A')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('z')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('Z')[0])
+        machine.reset()
+        self.assertFalse(machine.accepts('0')[0])
+
+    # For accepting raw tokens
+    def test_accepts_single_char(self):
+        machine = StateMachine(states=[State(START_STATE, Edge('CHAR', FINAL_STATE, True)), State(FINAL_STATE)])
+        self.assertTrue(machine.accepts('a')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('A')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('1')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('.')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('*')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('[')[0])
+        machine.reset()
+        self.assertFalse(machine.accepts('aa')[0])
+
+    # For accepting repeated tokens
+    def test_accepts_repeated_digit(self):
+        machine = StateMachine(states=[State(START_STATE, Edge('DIGIT', FINAL_STATE, True)), State(FINAL_STATE, Edge('', START_STATE))])
+        self.assertTrue(machine.accepts('1')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('12')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('123')[0])
+        machine.reset()
+        self.assertFalse(machine.accepts('1a3')[0])
+
+    # For accepting repeated tokens
+    def test_accepts_repeated_alpha(self):
+        machine = StateMachine(states=[State(START_STATE, Edge('ALPHA', FINAL_STATE, True)), State(FINAL_STATE, Edge('', START_STATE))])
+        self.assertTrue(machine.accepts('a')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('ab')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('abc')[0])
+        machine.reset()
+        self.assertFalse(machine.accepts('a2c')[0])
+
+    # For accepting repeated tokens
+    def test_accepts_repeated_char(self):
+        machine = StateMachine(states=[State(START_STATE, Edge('CHAR', FINAL_STATE, True)), State(FINAL_STATE, Edge('', START_STATE))])
+        self.assertTrue(machine.accepts('a')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('ab')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('abc')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('1')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('12')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('123')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('1a3')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('a2c')[0])
+
+    # For accepting repeated tokens
+    def test_accepts_mixed_character_classes(self):
+        machine = StateMachine(states=[
+                State(START_STATE, Edge('ALPHA', '1', True)),
+                State('1', Edge('DIGIT', '2', True)),
+                State('2', Edge('CHAR', FINAL_STATE, True)),
+                State(FINAL_STATE, Edge('', START_STATE))])
+        self.assertTrue(machine.accepts('a1a')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('b22')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('Z0&')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('p0)m3<')[0])
+        machine.reset()
+        self.assertTrue(machine.accepts('a1!b2@c3#d4$e5%')[0])
+        machine.reset()
+        self.assertFalse(machine.accepts('1a&')[0])
+        machine.reset()
+        self.assertFalse(machine.accepts('aaa')[0])
+        machine.reset()
+        self.assertFalse(machine.accepts('111')[0])
+        machine.reset()
+        self.assertFalse(machine.accepts('a1')[0])
 
 class ContinuationTestCases(unittest.TestCase):
     # For allowing repeated calls to sub-automata

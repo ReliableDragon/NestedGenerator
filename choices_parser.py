@@ -69,18 +69,40 @@ def split_into_parts(elements):
                 c = elements[i]
                 token += c
 
-        if c == '(':
+        if c == '*':
+            while elements[i+1].isnumeric():
+                i += 1
+                c = elements[i]
+                token += c
+            result.append(token)
+            token = ''
+
+        if c == '/':
+            result.append(token)
+            token = ''
+
+        if c == '(' or c == '[':
+            open_paren = c
+            if open_paren == '(':
+                close_paren = ')'
+            else:
+                close_paren = ']'
             parens += 1
             while parens > 0:
                 i += 1
                 c = elements[i]
-                if c == '(':
+                if c == open_paren:
                     parens += 1
-                if c == ')':
+                if c == close_paren:
                     parens -= 1
                 token += c
             logger.debug(f'Processing parenthetized clause "{token}".')
-            token = split_into_parts(token[1:-1])
+            if open_paren == '(':
+                token = split_into_parts(token[1:-1])
+            else:
+                result.append('[')
+                result.append(split_into_parts(token[1:-1]))
+                token = token[-1]
 
     if token:
         result.append(token)
