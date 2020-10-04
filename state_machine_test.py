@@ -4,7 +4,7 @@ import sys
 
 from state_machine import StateMachine, StateRecord, State, Edge, START_STATE, FINAL_STATE
 
-# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 def gen_test_state_record(id_, start, end):
     return StateRecord(0, id_, start, end)
@@ -220,24 +220,24 @@ class ContinuationTestCases(unittest.TestCase):
     # For allowing repeated calls to sub-automata
     def test_continuation_works(self):
         machine = StateMachine(states=[State(START_STATE, Edge('a', FINAL_STATE)), State(FINAL_STATE, Edge('', START_STATE))])
-        state_record = gen_test_state_record(START_STATE, 0, 1)
-        state_records = [state_record]
+        start_record = gen_test_state_record(START_STATE, 0, 1)
+        state_records = [start_record]
         result = (True, state_records, 1)
         self.assertEqual(machine.accepts_partial('aaa'), result)
 
-        state_record = gen_test_state_record(START_STATE, 0, 1)
         end_record = gen_test_state_record(FINAL_STATE, 1, 1)
-        state_record2 = gen_test_state_record(START_STATE, 1, 2)
-        state_records = [state_record, end_record, state_record2]
+        start_record = gen_test_state_record(START_STATE, 0, 1)
+        start_record2 = gen_test_state_record(START_STATE, 1, 2)
+        state_records = [start_record, end_record, start_record2]
         result = (True, state_records, 2)
         self.assertEqual(machine.accepts_partial('aaa'), result)
 
-        state_record = gen_test_state_record(START_STATE, 0, 1)
+        start_record = gen_test_state_record(START_STATE, 0, 1)
         end_record = gen_test_state_record(FINAL_STATE, 1, 1)
-        state_record2 = gen_test_state_record(START_STATE, 1, 2)
+        start_record2 = gen_test_state_record(START_STATE, 1, 2)
         end_record2 = gen_test_state_record(FINAL_STATE, 2, 2)
-        state_record3 = gen_test_state_record(START_STATE, 2, 3)
-        state_records = [state_record, end_record, state_record2, end_record2, state_record3]
+        start_record3 = gen_test_state_record(START_STATE, 2, 3)
+        state_records = [start_record, end_record, start_record2, end_record2, start_record3]
         result = (True, state_records, 3)
         self.assertEqual(machine.accepts_partial('aaa'), result)
 
@@ -341,15 +341,46 @@ class SubMachineTestCases(unittest.TestCase):
                 ])
         machine.register_automata(submachine_b)
 
-        state_record = StateRecord('a', START_STATE, 0, 0)
+        start_record = StateRecord('a', START_STATE, 0, 0)
         nested_start_record = StateRecord('b', START_STATE, 0, 1)
         submachine_record = StateRecord('a', 'b_internal', 0, 1, [nested_start_record])
         b_record = StateRecord('a', 'b', 1, 2)
-        state_records = [state_record, submachine_record, b_record]
+        state_records = [start_record, submachine_record, b_record]
         result = (True, state_records, 2)
         self.assertEqual(machine.accepts_partial('ba'), result)
 
-    #For ensuring that sub-automata register and run properly.
+    # For ensuring that sub-automata handle repetition.
+    def test_repeated_sub_machines(self):
+        machine = StateMachine(id_='b', states=[
+                State(START_STATE, Edge('', 'a')),
+                State('a', Edge('b', FINAL_STATE), is_automata=True),
+                State(FINAL_STATE, Edge('', START_STATE))
+                ])
+        submachine_b = StateMachine(id_='a', states=[
+                State(START_STATE, Edge('a', FINAL_STATE)),
+                State(FINAL_STATE, Edge('', START_STATE))
+                ])
+        machine.register_automata(submachine_b)
+
+        start_record = StateRecord('b', START_STATE, 0, 0)
+        nested_start_record = StateRecord('a', START_STATE, 0, 1)
+        submachine_record = StateRecord('a', 'a_internal', 0, 1, [nested_start_record])
+        b_record = StateRecord('b', 'a', 1, 2)
+        end_record = StateRecord('b', FINAL_STATE, 2, 2)
+        start_record2 = StateRecord('b', START_STATE, 2, 2)
+        nested_start_record2 = StateRecord('a', START_STATE, 2, 3)
+        submachine_record2 = StateRecord('a', 'a_internal', 2, 3, [nested_start_record2])
+        b_record2 = StateRecord('b', 'a', 3, 4)
+
+        state_records = [start_record, submachine_record, b_record]
+        result = (True, state_records, 2)
+        self.assertEqual(machine.accepts_partial('abab'), result)
+
+        state_records = [start_record, submachine_record, b_record, end_record, start_record2, submachine_record2, b_record2]
+        result = (True, state_records, 4)
+        self.assertEqual(machine.accepts_partial('abab'), result)
+
+    #For ensuring that nested sub-automata register and run properly.
     def test_double_nested_sub_machines(self):
         machine = StateMachine(id_='c', states=[
                 State(START_STATE, Edge('', 'b')),

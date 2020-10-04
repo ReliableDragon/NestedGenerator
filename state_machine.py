@@ -110,8 +110,8 @@ class StateMachine():
             assert isinstance(state, State), f'Got state {state} that was not an instance of class State!'
         self.state_map = {state.id: state for state in states}
         self.nested_automata = {}
-        self.alternatives_map = defaultdict(lambda: [(START_STATE, 0, [])]) # Of the form {start: (state, str_pos, path)}
-        self.used_state_pos_map = defaultdict(list) # Of the form {start: (state, str_pos).
+        self.alternatives_map = {} # Of the form {start: list: (state, str_pos, path)}
+        self.used_state_pos_map = defaultdict(set) # Of the form {start: set: (state, str_pos)}.
 
     def __str__(self):
         return f'State Machine {self.id}: {self.state_map}'
@@ -140,13 +140,13 @@ class StateMachine():
 
     # Returns (found: bool, path: list(StateRecord), end_pos: int)
     def accepts_partial(self, string, start=0):
-        return self._accepts(string, partial_match=True)
+        return self._accepts(string, start=start, partial_match=True)
 
     def reset(self):
         logger.debug('Resetting machine {self}')
-        self.alternatives_map = defaultdict(lambda: [(START_STATE, 0, [])])
-        self.path_map = defaultdict(list)
-        self.used_state_pos_map = defaultdict(list) # Of the form (state, str_pos).
+        self.alternatives_map = []
+        self.alternatives_map = {} # list: (state: string, start:int, path: list: StateRecord)
+        self.used_state_pos_map = defaultdict(set) # set: (state, str_pos).
 
     def debug(self, string):
         logger.debug(f'{self.id}: ' + string)
@@ -154,12 +154,19 @@ class StateMachine():
     # TODO: Decide if this should to a more strict DFS, to obviate the need to copy the path all over.
     # Returns (found_bool, path_state_record, end_pos)
     def _accepts(self, string, start=0, partial_match=False):
-        self.debug(f'Checking if machine {self} accepts "{string}". ({"Partial match" if partial_match else "Full match"})')
+        self.debug(f'Checking if state machine {self.id} accepts "{string}", starting at char {start} ({string[start:]})". ({"Partial match" if partial_match else "Full match"})')
+
+        if start in self.alternatives_map.keys():
+            alternatives = self.alternatives_map[start]
+        else:
+            alternatives = [(START_STATE, start, [])]
+            self.alternatives_map[start] = alternatives
+
         used_state_pos = self.used_state_pos_map[start]
-        alternatives = self.alternatives_map[start]
+        self.debug(f'used_state_pos: {used_state_pos}')
 
         while True:
-            self.debug(f'alternatives: {alternatives}')
+            self.debug(f'alternatives: {[alt[0:2] for alt in alternatives]}')
 
             if len(alternatives) == 0:
                 self.debug(f'Finished search, no accepting path found.')
@@ -168,7 +175,7 @@ class StateMachine():
             state_id, i, prev_path = alternatives.pop()
             state = self.state_map[state_id]
 
-            used_state_pos.append((state_id, i))
+            used_state_pos.add((state_id, i))
 
             # TODO: Look into making this properly DFS, so that we don't store
             # so many copies of the path and can restore the below code.
@@ -182,8 +189,9 @@ class StateMachine():
 
             # Making a call to a nested machine
             if state.is_automata:
-                assert state_id in self.nested_automata.keys(), f'Got state {state} whose state_id {state_id} was not in nested_automata list {self.nested_automata.keys()}!'
+                assert state_id in self.nested_automata.keys(), f'Got state_id {state_id} that was not in nested_automata list {self.nested_automata.keys()}!'
                 # Note that the automata can be called multiple times.
+                self.debug(f'State {state_id} is an automata, calling it with start={i}')
                 accepted, nested_path, match_end = self.nested_automata[state_id].accepts_partial(string, start=i)
                 # nested_path = self.nested_automata[state_id].get_path(i)
                 prev_path.append(StateRecord(self.id, state_id + '_internal', i, match_end, nested_path))
@@ -212,9 +220,9 @@ class StateMachine():
                     self.debug(f'Appending path step {path_step} to path {path}.')
                     path.append(path_step)
 
-                    destination_state = edge.dest
-                    if (destination_state, match_end) not in used_state_pos:
-                        state_pos_path_tuple = (destination_state, match_end, path)
+                    destination_state_id = edge.dest
+                    if (destination_state_id, match_end) not in used_state_pos:
+                        state_pos_path_tuple = (destination_state_id, match_end, path)
                         self.debug(f'Appending {state_pos_path_tuple} (equivalent to {(edge.dest, string[i+input_length:])}) to alternatives {alternatives}.')
                         assert state_pos_path_tuple[0] in self.state_map.keys(), f'Attempted to append state_pos_path_tuple {state_pos_path_tuple} whose state was not in the state map {self.state_map.keys()} to alternatives list {alternatives}!'
                         alternatives.append(state_pos_path_tuple)
@@ -224,7 +232,7 @@ class StateMachine():
                     self.debug(f'Edge did not match!')
 
             if state_id == FINAL_STATE and (partial_match or i == len(string)):
-                self.debug(f'Found an accepting path: {prev_path}')
+                self.debug(f'Found an accepting path up to char {i}: {prev_path}')
                 return True, prev_path, i
                 break
         return False, None, -1
