@@ -1,5 +1,4 @@
 import logging
-import set_up_logging
 import string as string_module
 
 from collections import defaultdict
@@ -19,9 +18,12 @@ CHARACTER_CATEGORIES = {
 class Edge():
 
     def __init__(self, input, dest, is_character_class=False):
-        self.input = input
-        self.dest = dest
-        self.is_character_class = is_character_class
+        self.input = input # string Accepted token by this edge.
+        self.dest = dest # string State ID of the destination of this edge.
+        self.is_character_class = is_character_class # Whether this edge represents a character class.
+
+    def clone(self):
+        return Edge(self.input, self.dest, self.is_character_class)
 
     def __str__(self):
         val = f'{{Edge'
@@ -51,10 +53,10 @@ class Edge():
 class State():
     def __init__(self, id_, edges=[], is_automata=False):
         self.id = id_
-        if edges == None:
-            edges = []
-        elif not isinstance(edges, list):
+        if not isinstance(edges, list):
             edges = [edges]
+        elif edges == None or len(edges) == 0:
+            edges = []
         for edge in edges:
             assert isinstance(edge, Edge), f'State {id_} got edge {edge} that was not an instance of class Edge!'
         self.edges = edges
@@ -70,6 +72,8 @@ class State():
 
     def __repr__(self):
         return self.__str__()
+
+
 
     def add_edge(self, edge):
         assert isinstance(edge, Edge), f'State {id_} got edge {edge} that was not an instance of class Edge!'
@@ -105,13 +109,13 @@ class StateRecord():
 class StateMachine():
 
     def __init__(self, id_=0, states=[]):
-        self.id = id_
+        self.id = id_ # IDs ending with _\d+ are reserved.
         for state in states:
             assert isinstance(state, State), f'Got state {state} that was not an instance of class State!'
         self.state_map = {state.id: state for state in states}
-        self.nested_automata = {}
-        self.alternatives_map = {} # Of the form {start: list: (state, str_pos, path)}
-        self.used_state_pos_map = defaultdict(set) # Of the form {start: set: (state, str_pos)}.
+        self.nested_automata = {} # {automata_id:int: automata:StateMachine}
+        self.alternatives_map = {} # {start:int:  [(state: string, start:int, path: list: StateRecord)]
+        self.used_state_pos_map = defaultdict(set) # {start: set: (state, str_pos)}.
 
     def __str__(self):
         return f'State Machine {self.id}: {self.state_map}'
@@ -138,15 +142,19 @@ class StateMachine():
     def accepts(self, string):
         return self._accepts(string, partial_match=False)[0:1]
 
+    # Returns the first accepting state reached by this automata over the given
+    # string, starting from the specified start location. Further calls to this
+    # method with the same start location will return additional accepting states,
+    # until there are no more to be found. Further calls with different starting
+    # locations will start entirely new searches from those locations.
     # Returns (found: bool, path: list(StateRecord), end_pos: int)
     def accepts_partial(self, string, start=0):
         return self._accepts(string, start=start, partial_match=True)
 
     def reset(self):
         logger.debug('Resetting machine {self}')
-        self.alternatives_map = []
-        self.alternatives_map = {} # list: (state: string, start:int, path: list: StateRecord)
-        self.used_state_pos_map = defaultdict(set) # set: (state, str_pos).
+        self.alternatives_map = {} # {start:int:  [(state: string, start:int, path: list: StateRecord)]
+        self.used_state_pos_map = defaultdict(set) # {start: set: (state, str_pos)}.
 
     def debug(self, string):
         logger.debug(f'{self.id}: ' + string)
@@ -168,13 +176,17 @@ class StateMachine():
         while True:
             self.debug(f'alternatives: {[alt[0:2] for alt in alternatives]}')
 
+            # Alternatives list is empty, nothing else to check!
             if len(alternatives) == 0:
                 self.debug(f'Finished search, no accepting path found.')
                 return False, None, -1
 
+            # Grab an alternative to investigate.
             state_id, i, prev_path = alternatives.pop()
             state = self.state_map[state_id]
 
+            # Mark this state as explored for this starting position, so that
+            # we don't go into infinite loops.
             used_state_pos.add((state_id, i))
 
             # TODO: Look into making this properly DFS, so that we don't store
@@ -190,7 +202,8 @@ class StateMachine():
             # Making a call to a nested machine
             if state.is_automata:
                 assert state_id in self.nested_automata.keys(), f'Got state_id {state_id} that was not in nested_automata list {self.nested_automata.keys()}!'
-                # Note that the automata can be called multiple times.
+                # Note that the automata can be called multiple times. Different starting locations are treated
+                # entirely indepentently.
                 self.debug(f'State {state_id} is an automata, calling it with start={i}')
                 accepted, nested_path, match_end = self.nested_automata[state_id].accepts_partial(string, start=i)
                 # nested_path = self.nested_automata[state_id].get_path(i)
@@ -247,7 +260,3 @@ def string_matches_edge_input(string, i, edge):
         return True
     else:
         return False
-
-
-if __name__ == '__main__':
-    args = set_up_logging.set_up_logging()
