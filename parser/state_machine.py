@@ -127,7 +127,7 @@ class StateMachine():
     def add_state(self, state):
         assert isinstance(state, State), f'Got state {state} that was not an instance of class State!'
         assert state.id not in self.state_map.keys(), f'Attempted to add state {state} that was already present in state machine {self.id}!'
-        self.state_map[state.id] = state.edges
+        self.state_map[state.id] = state
 
     def add_edge(self, state_id, edge):
         assert isinstance(edge, Edge), f'State {id_} got edge {edge} that was not an instance of class Edge!'

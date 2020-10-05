@@ -2,7 +2,7 @@ import unittest
 import logging
 
 from state_machine import Edge, State
-from state_machine_test_helper import states_equal, edges_equal
+from state_machine_test_helper import assert_states_equal, edges_equal
 import repetition_applicator
 
 logger = logging.getLogger(__name__)
@@ -33,9 +33,9 @@ class ApplyRepetitionSingleTokenTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_optional_repetition(self):
         edge = Edge('a', 'state_a')
@@ -61,9 +61,9 @@ class ApplyRepetitionSingleTokenTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_N_repetition(self):
         edge = Edge('a', 'state_a')
@@ -90,9 +90,9 @@ class ApplyRepetitionSingleTokenTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_range_repetition(self):
         in_edge = Edge('a', 'state_a')
@@ -122,9 +122,9 @@ class ApplyRepetitionSingleTokenTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_range_repetition(self):
         in_edge = Edge('a', 'state_a')
@@ -154,9 +154,9 @@ class ApplyRepetitionSingleTokenTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_N_minus_repetition(self):
         in_edge = Edge('a', 'state_a')
@@ -186,9 +186,9 @@ class ApplyRepetitionSingleTokenTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_N_plus_repetition(self):
         in_edge = Edge('a', 'state_a')
@@ -218,9 +218,9 @@ class ApplyRepetitionSingleTokenTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_any_repetition(self):
         in_edge = Edge('a', 'state_a')
@@ -246,9 +246,9 @@ class ApplyRepetitionSingleTokenTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
 class ApplyRepetitionConsecutiveTokensTestCase(unittest.TestCase):
 
@@ -279,9 +279,9 @@ class ApplyRepetitionConsecutiveTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_optional_repetition(self):
         edge_a = Edge('a', 'state_a')
@@ -311,9 +311,9 @@ class ApplyRepetitionConsecutiveTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_N_repetition(self):
         edge_a = Edge('a', 'state_a')
@@ -346,9 +346,9 @@ class ApplyRepetitionConsecutiveTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_range_repetition(self):
         edge_a = Edge('a', 'state_a')
@@ -386,9 +386,9 @@ class ApplyRepetitionConsecutiveTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_1_range_repetition(self):
         edge_a = Edge('a', 'state_a')
@@ -426,9 +426,9 @@ class ApplyRepetitionConsecutiveTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_N_minus_repetition(self):
         edge_a = Edge('a', 'state_a')
@@ -466,9 +466,9 @@ class ApplyRepetitionConsecutiveTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_N_plus_repetition(self):
         edge_a = Edge('a', 'state_a')
@@ -506,9 +506,9 @@ class ApplyRepetitionConsecutiveTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_any_repetition(self):
         edge_a = Edge('a', 'state_a')
@@ -539,9 +539,9 @@ class ApplyRepetitionConsecutiveTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
 class ApplyRepetitionAlternativeTokensTestCase(unittest.TestCase):
 
@@ -572,9 +572,9 @@ class ApplyRepetitionAlternativeTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_optional_repetition(self):
         edge_a = Edge('a', 'state_a')
@@ -605,9 +605,9 @@ class ApplyRepetitionAlternativeTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_N_repetition(self):
         edge_a = Edge('a', 'state_a')
@@ -640,9 +640,9 @@ class ApplyRepetitionAlternativeTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_range_repetition(self):
         edge_a = Edge('a', 'state_a')
@@ -681,9 +681,9 @@ class ApplyRepetitionAlternativeTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_1_range_repetition(self):
         edge_a = Edge('a', 'state_a')
@@ -722,9 +722,9 @@ class ApplyRepetitionAlternativeTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_N_minus_repetition(self):
         edge_a = Edge('a', 'state_a')
@@ -763,9 +763,9 @@ class ApplyRepetitionAlternativeTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_N_plus_repetition(self):
         edge_a = Edge('a', 'state_a')
@@ -802,9 +802,9 @@ class ApplyRepetitionAlternativeTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])
 
     def test_any_repetition(self):
         edge_a = Edge('a', 'state_a')
@@ -835,6 +835,6 @@ class ApplyRepetitionAlternativeTokensTestCase(unittest.TestCase):
         logger.debug(f'start_edges')
         self.assertTrue(edges_equal(actual[0], expected[0]))
         logger.debug(f'end_states')
-        self.assertTrue(states_equal(actual[1], expected[1]))
+        assert_states_equal(actual[1], expected[1])
         logger.debug(f'states')
-        self.assertTrue(states_equal(actual[2], expected[2]))
+        assert_states_equal(actual[2], expected[2])

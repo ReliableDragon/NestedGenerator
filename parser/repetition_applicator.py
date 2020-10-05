@@ -3,7 +3,7 @@ import logging
 from state_machine import Edge, State
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 # in_edges: [Edge] edges that will be added as outgoing edges from the previous state(s).
 # end_states: [State] references to the states in states_to_repeat that do not have any
@@ -131,4 +131,5 @@ def apply_repetition(in_edges, end_states, states_to_repeat, repetition, is_opti
                         logger.debug(f'Adding skip edge {edge} to state {state.id}')
                         state.add_edge(edge.clone())
 
+    logger.debug(f'Returning:\n  in_edges: {in_edges}\n  new_end_states: {new_end_states}\n  states: {states}')
     return in_edges, new_end_states, states

@@ -42,13 +42,13 @@ silent_tag = "{" base_tag "}"
 
 base_tag = "$" ["[" 1*DIGIT "]"]
 
-interpolation_phrase = "{" *choice_clause interpolation__call *choice_clause "}" / interpolation__call
-
+interpolation_phrase = "{" *choice_clause interpolation_call *choice_clause "}" / interpolation_call
 
 state_modification = " %" [condition "->"] id ":" condition "%"
 state_store_result = "%" [condition "->"] id ":@%"
 value_modifications = "%" value_modification 1*("%" value_modification) "%"
 value_modification = [modification_condition "->"] modification_calculation
+interpolation_call = "%" [condition "->"] id "%"
 
 
 
@@ -62,6 +62,6 @@ modification_calculation = modification_value / modification_calculation operand
 modification_value = ("\"" *CHAR "\"") / 1*DIGIT / id / "@"
 
 comparator = "==" / "!=" / ">=" / "<=" / ">" / "<" / " in "
-boolean_operators = "&&" / "||"
+boolean_operator = "&&" / "||"
 operand = "+" / "*" / "-" / "/" / "^"
 value = ("\"" *CHAR "\"") / 1*DIGIT / id
