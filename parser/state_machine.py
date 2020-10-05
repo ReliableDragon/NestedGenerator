@@ -73,7 +73,8 @@ class State():
     def __repr__(self):
         return self.__str__()
 
-
+    def clone(self):
+        return State(self.id, [edge.clone() for edge in self.edges], self.is_automata)
 
     def add_edge(self, edge):
         assert isinstance(edge, Edge), f'State {id_} got edge {edge} that was not an instance of class Edge!'

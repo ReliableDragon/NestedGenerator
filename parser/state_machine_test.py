@@ -9,6 +9,22 @@ logging.basicConfig(level=logging.DEBUG)
 def gen_test_state_record(id_, start, end):
     return StateRecord(0, id_, start, end)
 
+class StateMethodsTestCase(unittest.TestCase):
+    def test_clone(self):
+        original_state = State('a', [Edge('a', 'a_state'), Edge('b', 'b_state')], is_automata = True)
+        cloned_state = original_state.clone()
+
+        self.assertTrue(cloned_state.id == 'a')
+        self.assertTrue(cloned_state.is_automata == True)
+        self.assertTrue(cloned_state.edges[0].input == 'a')
+        self.assertTrue(cloned_state.edges[0].dest == 'a_state')
+        self.assertTrue(cloned_state.edges[1].input == 'b')
+        self.assertTrue(cloned_state.edges[1].dest == 'b_state')
+
+        cloned_state.edges[0].input = 'aaaaaaaaaaaaaaa'
+
+        self.assertTrue(original_state.edges[0].input == 'a')
+
 class SimpleMachinesTestCase(unittest.TestCase):
 
     def test_state_record_equality(self):
